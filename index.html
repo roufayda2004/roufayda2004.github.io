@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخطط تعافي الجسم بعد الإقلاع عن التدخين</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        canvas { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <h2>مخطط تعافي الجسم بعد الإقلاع عن التدخين</h2>
+    <canvas id="recoveryChart"></canvas>
+
+    <script>
+        const ctx = document.getElementById('recoveryChart').getContext('2d');
+        const recoveryChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['يوم 1', 'يوم 7', 'شهر 1', 'شهر 3', 'شهر 6', 'سنة 1', 'سنة 2', '5 سنوات'],
+                datasets: [{
+                    label: 'نسبة تعافي الجسم (%)',
+                    data: [5, 20, 40, 60, 80, 90, 95, 100],
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 128, 0, 0.2)',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    pointBackgroundColor: 'green',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let labels = [
+                                    "تحسن طفيف في التنفس",
+                                    "تبدأ الرئة في تنظيف نفسها",
+                                    "تحسن ملحوظ في وظائف الرئة",
+                                    "عودة النشاط وتحسن الأداء البدني",
+                                    "انخفاض كبير في السعال وصعوبة التنفس",
+                                    "تحسن شبه كامل في الرئة",
+                                    "أقرب إلى شخص غير مدخن",
+                                    "تعافي شبه كامل، كأنك لم تدخن"
+                                ];
+                                return labels[context.dataIndex];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
