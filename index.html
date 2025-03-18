@@ -1,467 +1,65 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>رحلة التعافي من التدخين - تطبيق متكامل</title>
-  <!-- مكتبة Chart.js لرسم البيانات -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Primer CSS لنمط GitHub -->
-  <link rel="stylesheet" href="https://unpkg.com/@primer/css@^20.2.4/dist/primer.css" />
-  <style>
-    :root {
-      --color-bg: #0d1117;
-      --color-text: #c9d1d9;
-      --color-border: #30363d;
-      --color-primary: #58a6ff;
-      --color-success: #238636;
-      --color-danger: #da3633;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background-color: var(--color-bg);
-      color: var(--color-text);
-      line-height: 1.6;
-      padding: 20px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    /* الوضع الليلي مضمون عبر الثيم */
-    body.dark-mode {
-      background-color: #ffffff;
-      color: #24292e;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .section {
-      background-color: #161b22;
-      border: 1px solid var(--color-border);
-      border-radius: 6px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    .btn {
-      background-color: #21262d;
-      border: 1px solid var(--color-border);
-      color: var(--color-text);
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background-color 0.2s, border-color 0.2s;
-    }
-    .btn:hover {
-      background-color: #30363d;
-      border-color: #8b949e;
-    }
-    input, textarea, select {
-      background-color: #0d1117;
-      border: 1px solid var(--color-border);
-      color: var(--color-text);
-      padding: 8px;
-      border-radius: 6px;
-      width: 100%;
-      margin-bottom: 8px;
-    }
-    input::placeholder, textarea::placeholder {
-      color: #6e7681;
-    }
-    .notification {
-      background-color: var(--color-success);
-      padding: 8px;
-      border-radius: 4px;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-    .timeline {
-      border-left: 2px solid var(--color-border);
-      margin-left: 16px;
-      padding-left: 16px;
-    }
-    .timeline-item {
-      margin-bottom: 8px;
-    }
-    .chart-container {
-      position: relative;
-      height: 300px;
-      margin-bottom: 16px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العد التنازلي حتى 18 ماي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- العنوان الرئيسي مع زر تبديل الوضع الليلي -->
-    <header>
-      <h1>رحلة التعافي من التدخين - تطبيق متكامل</h1>
-      <p>تطبيق متكامل لقياس التقدم، توفير المال، الحصول على نصائح صحية، تحديات يومية، ودعم فني.</p>
-      <button class="btn" onclick="toggleDarkMode()">تبديل الوضع الليلي</button>
-    </header>
-    
-    <!-- قسم بيانات المستخدم -->
-    <div class="section" id="user-data">
-      <h2>بيانات المستخدم</h2>
-      <label>تاريخ الإقلاع:</label>
-      <input type="datetime-local" id="quitDate" />
-      <label>عدد السجائر اليومية:</label>
-      <input type="number" id="cigarettes" value="20" />
-      <button class="btn" onclick="startTracking()">بدء التتبع</button>
-      <div id="notification-area"></div>
-    </div>
-    
-    <!-- قسم الإحصائيات المتقدمة -->
-    <div class="section" id="advanced-stats">
-      <h2>الإحصائيات المتقدمة</h2>
-      <div class="chart-container">
-        <canvas id="recoveryChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <canvas id="savingsChart"></canvas>
-      </div>
-    </div>
-    
-    <!-- قسم التقدم الزمني -->
-    <div class="section" id="timeline-section">
-      <h2>التقدم الزمني</h2>
-      <div id="timeline" class="timeline"></div>
-    </div>
-    
-    <!-- قسم التحديات اليومية/الأسبوعية -->
-    <div class="section" id="challenges">
-      <h2>التحديات اليومية/الأسبوعية</h2>
-      <ul id="challenge-list"></ul>
-      <button class="btn" onclick="addChallenge()">إضافة تحدي جديد</button>
-    </div>
-    
-    <!-- قسم المذكرات اليومية -->
-    <div class="section" id="daily-journal">
-      <h2>المذكرات اليومية</h2>
-      <textarea id="dailyNote" rows="4" placeholder="اكتب ملاحظاتك وتجاربك اليوم..."></textarea>
-      <button class="btn" onclick="saveJournal()">حفظ المذكرة</button>
-      <div id="journal-entries"></div>
-    </div>
-    
-    <!-- قسم النصائح الصحية والملهمة -->
-    <div class="section" id="health-tips">
-      <h2>نصائح صحية وملهمة</h2>
-      <div id="tip-message"></div>
-      <button class="btn" onclick="showHealthTip()">عرض نصيحة جديدة</button>
-    </div>
-    
-    <!-- قسم مشاركة التقدم -->
-    <div class="section" id="share-progress">
-      <h2>مشاركة التقدم</h2>
-      <button class="btn" onclick="shareProgress()">شارك تقدمك على وسائل التواصل</button>
-    </div>
-    
-    <!-- قسم الإشعارات عبر البريد الإلكتروني -->
-    <div class="section" id="email-notifications">
-      <h2>الإشعارات عبر البريد الإلكتروني</h2>
-      <label>أدخل بريدك الإلكتروني لتلقي التقارير:</label>
-      <input type="email" id="userEmail" placeholder="example@mail.com" />
-      <button class="btn" onclick="subscribeEmail()">اشتراك</button>
-    </div>
-    
-    <!-- قسم التنبؤات (محاكاة ML) -->
-    <div class="section" id="ml-predictions">
-      <h2>تنبؤات التحسن (محاكاة ML)</h2>
-      <p id="ml-result">جاري التحليل...</p>
-      <button class="btn" onclick="simulateML()">تحديث التنبؤات</button>
-    </div>
-    
-    <!-- قسم تحميل التقارير -->
-    <div class="section" id="download-reports">
-      <h2>تحميل التقارير</h2>
-      <button class="btn" onclick="downloadReport()">تحميل تقرير شامل</button>
-    </div>
-    
-    <!-- قسم دردشة الدعم الفني -->
-    <div class="section" id="chatbot">
-      <h2>الدعم الفني</h2>
-      <div id="chat-area" style="border:1px solid var(--color-border); padding:8px; height:150px; overflow:auto;"></div>
-      <input type="text" id="chat-input" placeholder="اكتب رسالتك..." />
-      <button class="btn" onclick="sendChat()">إرسال</button>
-    </div>
-    
-    <!-- قسم المدونة وقصص النجاح -->
-    <div class="section" id="blog">
-      <h2>قصص النجاح والمدونة</h2>
-      <p>تابع قصص نجاح مستخدمين آخرين وكيف تغلبوا على التدخين.</p>
-      <a href="https://roufayda2004.github.io/blog" class="btn" target="_blank">زيارة المدونة</a>
-    </div>
-    
-    <!-- قسم الفيديوهات التعليمية -->
-    <div class="section" id="video-tutorials">
-      <h2>دروس وفيديوهات تعليمية</h2>
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Tutorial Video" frameborder="0" allowfullscreen></iframe>
-    </div>
-  </div>
 
-  <script>
-    // حفظ بعض البيانات في LocalStorage لضمان الاستمرارية
-    const defaultChallenges = [
-      "تجنب التدخين لمدة يوم كامل",
-      "ممارسة رياضة خفيفة لمدة 30 دقيقة",
-      "تناول وجبة صحية غنية بالألياف"
-    ];
-    const defaultHealthTips = [
-      "كل يوم بدون تدخين يُحسّن صحة رئتيك.",
-      "مارس التمارين الرياضية لتحسين الدورة الدموية.",
-      "اشرب الكثير من الماء لطرد السموم.",
-      "احرص على النوم الكافي لتجديد خلايا جسمك."
-    ];
+    <h1>العد التنازلي حتى 18 ماي</h1>
+    <div id="countdown"></div>
 
-    // استرجاع أو تعيين الإعدادات من LocalStorage
-    function loadFromStorage(key, defaultValue) {
-      const stored = localStorage.getItem(key);
-      return stored ? JSON.parse(stored) : defaultValue;
-    }
-    function saveToStorage(key, value) {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
+    <script>
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let targetYear = new Date().getFullYear();
+            const targetDate = new Date(`May 18, ${targetYear} 00:00:00`).getTime();
 
-    // الحالة الأولية
-    let challenges = loadFromStorage("challenges", defaultChallenges);
-    let journalEntries = loadFromStorage("journalEntries", []);
-    let healthTips = loadFromStorage("healthTips", defaultHealthTips);
-    
-    // تبديل الوضع الليلي وحفظ التفضيل
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
-      const isDark = document.body.classList.contains("dark-mode");
-      localStorage.setItem("darkMode", isDark);
-      showNotification("تم تبديل الوضع.");
-    }
-    // عند تحميل الصفحة تحقق من إعدادات الوضع الليلي
-    window.onload = function() {
-      if(localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
-      }
-      renderChallenges();
-      renderJournal();
-      showHealthTip();
-      updateRecoveryChart();
-      // ضبط الرسالة الأولية لتنبؤات ML
-      document.getElementById("ml-result").textContent = "جاري التحليل...";
-    };
+            if (now > targetDate) {
+                targetYear++; // الانتقال للسنة القادمة تلقائيًا إذا انتهى العد التنازلي
+            }
 
-    // عرض إشعار
-    function showNotification(message) {
-      const notificationArea = document.getElementById("notification-area");
-      const notif = document.createElement("div");
-      notif.className = "notification";
-      notif.textContent = message;
-      notificationArea.appendChild(notif);
-      setTimeout(() => { notif.remove(); }, 3000);
-    }
+            const timeLeft = targetDate - now;
+            if (timeLeft <= 0) {
+                document.getElementById("countdown").innerHTML = "انتهى العد التنازلي!";
+                return;
+            }
 
-    // بدء التتبع وحساب الوقت وتحديث الأقسام
-    function startTracking() {
-      const quitDateInput = document.getElementById("quitDate").value;
-      if (!quitDateInput) {
-        showNotification("يرجى تحديد تاريخ الإقلاع.");
-        return;
-      }
-      const quitDate = new Date(quitDateInput);
-      const now = new Date();
-      const elapsedHours = (now - quitDate) / (1000 * 60 * 60);
-      updateTimeline(elapsedHours);
-      updateRecoveryChart();
-      updateSavingsChart(elapsedHours);
-      showNotification("تم تحديث التقدم الزمني.");
-    }
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    // بيانات التقدم الزمني (محاكاة)
-    const recoveryTimeline = [
-      { time: 0, unit: "ساعة", effect: "بداية التعافي" },
-      { time: 24, unit: "ساعة", effect: "تحسن بسيط" },
-      { time: 48, unit: "ساعة", effect: "تجدد الدورة الدموية" },
-      { time: 1, unit: "يوم", effect: "انخفاض مستوى النيكوتين" },
-      { time: 7, unit: "يوم", effect: "تحسن التنفس" },
-      { time: 1, unit: "أسبوع", effect: "تراجع أعراض الانسحاب" }
-    ];
-    function convertToHours(time, unit) {
-      if (unit === "ساعة") return time;
-      if (unit === "يوم") return time * 24;
-      if (unit === "أسبوع") return time * 24 * 7;
-      return time;
-    }
-    function updateTimeline(elapsedHours) {
-      const timeline = document.getElementById("timeline");
-      timeline.innerHTML = "";
-      recoveryTimeline.forEach(stage => {
-        const stageHours = convertToHours(stage.time, stage.unit);
-        const item = document.createElement("div");
-        item.className = "timeline-item";
-        const statusIcon = elapsedHours >= stageHours ? "✅" : "⏳";
-        item.textContent = `${statusIcon} ${stage.effect} (${stage.time} ${stage.unit})`;
-        timeline.appendChild(item);
-      });
-    }
+            document.getElementById("countdown").innerHTML = 
+                `${days} يوم - ${hours} ساعة - ${minutes} دقيقة - ${seconds} ثانية`;
+        }
 
-    // تحديث رسم بياني لاسترجاع الجسم
-    function updateRecoveryChart() {
-      const ctx = document.getElementById("recoveryChart").getContext("2d");
-      const recoveryData = [5, 20, 40, 60, 80, 90];
-      if(window.recoveryChartInstance) {
-        window.recoveryChartInstance.data.datasets[0].data = recoveryData;
-        window.recoveryChartInstance.update();
-      } else {
-        window.recoveryChartInstance = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: ["يوم 1", "يوم 2", "يوم 3", "يوم 4", "يوم 5", "يوم 6"],
-            datasets: [{
-              label: "استرجاع الجسم (%)",
-              data: recoveryData,
-              borderColor: "green",
-              backgroundColor: "rgba(0,128,0,0.2)",
-              fill: true
-            }]
-          },
-          options: { responsive: true }
-        });
-      }
-    }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
 
-    // تحديث رسم بياني للمدخرات المالية
-    function updateSavingsChart(elapsedHours) {
-      const cigarettesPerDay = document.getElementById("cigarettes").value;
-      const days = elapsedHours / 24;
-      const totalCigarettesAvoided = days * cigarettesPerDay;
-      const savings = totalCigarettesAvoided * 0.5; // افتراض توفير 0.5 دولار لكل سيجارة
-      const ctx = document.getElementById("savingsChart").getContext("2d");
-      if(window.savingsChartInstance) {
-        window.savingsChartInstance.data.datasets[0].data = [savings];
-        window.savingsChartInstance.update();
-      } else {
-        window.savingsChartInstance = new Chart(ctx, {
-          type: "doughnut",
-          data: {
-            labels: ["المدخرات ($)"],
-            datasets: [{
-              label: "المدخرات المالية",
-              data: [savings],
-              backgroundColor: ["#238636"],
-              borderColor: ["#c9d1d9"],
-              borderWidth: 1
-            }]
-          },
-          options: { responsive: true }
-        });
-      }
-    }
-
-    // إدارة تحديات المستخدم
-    function addChallenge() {
-      const newChallenge = prompt("أدخل تحدي جديد:");
-      if(newChallenge) {
-        challenges.push(newChallenge);
-        saveToStorage("challenges", challenges);
-        renderChallenges();
-      }
-    }
-    function renderChallenges() {
-      const list = document.getElementById("challenge-list");
-      list.innerHTML = "";
-      challenges.forEach(challenge => {
-        const li = document.createElement("li");
-        li.textContent = challenge;
-        list.appendChild(li);
-      });
-    }
-
-    // إدارة المذكرات اليومية
-    function saveJournal() {
-      const note = document.getElementById("dailyNote").value;
-      if(note) {
-        journalEntries.push({ note, date: new Date().toLocaleString() });
-        saveToStorage("journalEntries", journalEntries);
-        renderJournal();
-        document.getElementById("dailyNote").value = "";
-        showNotification("تم حفظ المذكرة.");
-      }
-    }
-    function renderJournal() {
-      const container = document.getElementById("journal-entries");
-      container.innerHTML = "";
-      journalEntries.forEach(entry => {
-        const div = document.createElement("div");
-        div.style.borderBottom = "1px solid var(--color-border)";
-        div.style.marginBottom = "4px";
-        div.innerHTML = `<strong>${entry.date}</strong>: ${entry.note}`;
-        container.appendChild(div);
-      });
-    }
-
-    // عرض نصيحة صحية عشوائية
-    function showHealthTip() {
-      const randomIndex = Math.floor(Math.random() * healthTips.length);
-      document.getElementById("tip-message").textContent = healthTips[randomIndex];
-    }
-
-    // محاكاة مشاركة التقدم على وسائل التواصل
-    function shareProgress() {
-      alert("تم مشاركة تقدمك على وسائل التواصل الاجتماعي (محاكاة)!");
-    }
-
-    // اشتراك البريد الإلكتروني (محاكاة)
-    function subscribeEmail() {
-      const email = document.getElementById("userEmail").value;
-      if(email) {
-        alert(`تم الاشتراك في الإشعارات عبر البريد الإلكتروني: ${email} (محاكاة)`);
-      }
-    }
-
-    // محاكاة تنبؤات ML
-    function simulateML() {
-      // هنا يتم استخدام رقم عشوائي لمحاكاة التنبؤات
-      const prediction = Math.floor(Math.random() * 100);
-      document.getElementById("ml-result").textContent = `توقعات التحسن: ${prediction}% خلال الشهر القادم.`;
-    }
-
-    // تحميل تقرير شامل باستخدام Blob
-    function downloadReport() {
-      const reportData = {
-        quitDate: document.getElementById("quitDate").value,
-        cigarettesPerDay: document.getElementById("cigarettes").value,
-        journalEntries,
-        challenges
-      };
-      const reportText = JSON.stringify(reportData, null, 2);
-      const blob = new Blob([reportText], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "report.json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showNotification("تم تنزيل التقرير.");
-    }
-
-    // دردشة الدعم الفني (محاكاة)
-    function sendChat() {
-      const chatInput = document.getElementById("chat-input");
-      const chatArea = document.getElementById("chat-area");
-      if(chatInput.value) {
-        const userMessage = document.createElement("div");
-        userMessage.textContent = "أنت: " + chatInput.value;
-        chatArea.appendChild(userMessage);
-        // استجابة بسيطة من نظام الدعم الفني
-        const botMessage = document.createElement("div");
-        botMessage.textContent = "الدعم الفني: شكرًا لرسالتك، سنتواصل معك قريبًا.";
-        chatArea.appendChild(botMessage);
-        chatInput.value = "";
-        chatArea.scrollTop = chatArea.scrollHeight;
-      }
-    }
-  </script>
 </body>
 </html>
