@@ -22,13 +22,33 @@
             font-size: 28px;
             margin-bottom: 20px;
         }
-        #countdown, #quote {
+        #countdown {
             font-size: 24px;
             font-weight: bold;
             background: rgba(0, 0, 0, 0.5);
             padding: 20px;
             border-radius: 10px;
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            min-width: 300px;
+            margin-top: 20px;
+        }
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .label {
+            font-size: 16px;
+        }
+        #quote {
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
             min-width: 300px;
             margin-top: 20px;
@@ -37,7 +57,12 @@
 </head>
 <body>
     <h1>العد التنازلي حتى 18 ماي</h1>
-    <div id="countdown"></div>
+    <div id="countdown">
+        <div class="time-box"><span id="days"></span><span class="label">يوم</span></div>
+        <div class="time-box"><span id="hours"></span><span class="label">ساعة</span></div>
+        <div class="time-box"><span id="minutes"></span><span class="label">دقيقة</span></div>
+        <div class="time-box"><span id="seconds"></span><span class="label">ثانية</span></div>
+    </div>
     <div id="quote"></div>
 
     <script>
@@ -55,7 +80,7 @@
         function updateCountdown() {
             const now = new Date().getTime();
             let targetYear = new Date().getFullYear();
-            const targetDate = new Date(targetYear, 4, 18, 0, 0, 0).getTime();
+            let targetDate = new Date(targetYear, 4, 18, 0, 0, 0).getTime();
 
             if (now > targetDate) {
                 targetYear++;
@@ -73,8 +98,10 @@
             const minutes = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
             const seconds = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
 
-            document.getElementById("countdown").innerHTML = 
-                `${days} يوم - ${hours} ساعة - ${minutes} دقيقة - ${seconds} ثانية`;
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours;
+            document.getElementById("minutes").innerText = minutes;
+            document.getElementById("seconds").innerText = seconds;
         }
 
         function updateQuote() {
