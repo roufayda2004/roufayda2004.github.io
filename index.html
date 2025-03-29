@@ -2,12 +2,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العد التنازلي + تأثير المطر</title>
+    <title>العد التنازلي مع تأثير المطر</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
+            background: #023047;
             color: white;
             padding: 50px;
             display: flex;
@@ -17,16 +17,26 @@
             height: 100vh;
             margin: 0;
             position: relative;
-            overflow: hidden;
-            transition: background 0.5s;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            position: absolute;
+            top: 20px;
+            width: 100%;
+        }
+        .custom-button {
+            background: black;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: 2px solid white;
+            border-radius: 10px;
+            margin: 0 10px;
+            cursor: pointer;
         }
         h1 {
             font-size: 28px;
-            margin-bottom: 20px;
-        }
-        #message {
-            font-size: 20px;
-            font-weight: bold;
             margin-bottom: 20px;
         }
         #countdown {
@@ -50,47 +60,14 @@
         .label {
             font-size: 16px;
         }
-        #quote {
-            font-size: 24px;
-            font-weight: bold;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-            min-width: 300px;
-            margin-top: 20px;
-        }
-        .cloud {
-            background: gray;
-            padding: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-        .rain {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            pointer-events: none;
-        }
-        .drop {
-            position: absolute;
-            color: lime;
-            font-size: 16px;
-            animation: fall linear infinite;
-        }
-        @keyframes fall {
-            from { transform: translateY(-100%); opacity: 1; }
-            to { transform: translateY(100vh); opacity: 0; }
-        }
     </style>
 </head>
 <body>
-    <div id="message">إن لم تستطع الانتظار فتذكر أن هالة تنتظرك بشوق 🥰</div>
+    <div class="button-container">
+        <button class="custom-button">زر 1</button>
+        <button class="custom-button">زر 2</button>
+        <button class="custom-button">زر 3</button>
+    </div>
     <h1>العد التنازلي حتى 18 ماي</h1>
     <div id="countdown">
         <div class="time-box"><span id="days"></span><span class="label">يوم</span></div>
@@ -98,14 +75,7 @@
         <div class="time-box"><span id="minutes"></span><span class="label">دقيقة</span></div>
         <div class="time-box"><span id="seconds"></span><span class="label">ثانية</span></div>
     </div>
-    <div id="quote"></div>
-    <div class="cloud" onclick="toggleRain()">☁️ اضغط لبدء/إيقاف المطر</div>
-    <div class="rain"></div>
     <script>
-        const quotes = [
-            "الصبر مفتاح الفرج.", "الصبر مر، لكن ثماره حلوة.", "بالصبر تحقق الآمال.", "الصبر شجرة جذورها مرّة وثمارها حلوة.",
-            "من صبر ظفر.", "لا شيء يعادل الصبر في القوة.", "الصبر نصف الإيمان.", "مع الصبر يأتي النصر."
-        ];
         function updateCountdown() {
             const now = new Date().getTime();
             let targetYear = new Date().getFullYear();
@@ -119,39 +89,16 @@
                 document.getElementById("countdown").innerHTML = "انتهى العد التنازلي!";
                 return;
             }
-            document.getElementById("days").innerText = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            document.getElementById("hours").innerText = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-            document.getElementById("minutes").innerText = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-            document.getElementById("seconds").innerText = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
-        }
-        function updateQuote() {
-            document.getElementById("quote").innerHTML = quotes[new Date().getDate() % quotes.length];
-        }
-        let raining = false;
-        let rainContainer = document.querySelector(".rain");
-        let interval;
-        function toggleRain() {
-            if (raining) {
-                clearInterval(interval);
-                rainContainer.innerHTML = "";
-                document.body.style.background = "linear-gradient(to right, #4facfe, #00f2fe)";
-            } else {
-                interval = setInterval(createRainDrop, 100);
-                document.body.style.background = "black";
-            }
-            raining = !raining;
-        }
-        function createRainDrop() {
-            let drop = document.createElement("div");
-            drop.classList.add("drop");
-            drop.innerText = "0";
-            drop.style.left = Math.random() * window.innerWidth + "px";
-            drop.style.animationDuration = (Math.random() * 2 + 2) + "s";
-            rainContainer.appendChild(drop);
-            setTimeout(() => drop.remove(), 4000);
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            const minutes = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            const seconds = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours;
+            document.getElementById("minutes").innerText = minutes;
+            document.getElementById("seconds").innerText = seconds;
         }
         updateCountdown();
-        updateQuote();
         setInterval(updateCountdown, 1000);
     </script>
 </body>
