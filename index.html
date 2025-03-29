@@ -18,6 +18,7 @@
             margin: 0;
             position: relative;
             overflow: hidden;
+            transition: background 0.5s;
         }
         h1 {
             font-size: 28px;
@@ -133,8 +134,10 @@
             if (raining) {
                 clearInterval(interval);
                 rainContainer.innerHTML = "";
+                document.body.style.background = "linear-gradient(to right, #4facfe, #00f2fe)";
             } else {
                 interval = setInterval(createRainDrop, 100);
+                document.body.style.background = "black";
             }
             raining = !raining;
         }
