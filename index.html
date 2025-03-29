@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العد التنازلي حتى 18 ماي</title>
+    <title>تجارب تفاعلية</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,21 +16,19 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            position: relative;
-            transition: background 0.5s;
         }
         .buttons {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
-            position: absolute;
-            top: 10px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
         .button {
             background: transparent;
             border: 2px solid white;
-            padding: 10px 20px;
-            font-size: 18px;
+            padding: 10px 15px;
+            font-size: 16px;
             color: white;
             cursor: pointer;
             border-radius: 5px;
@@ -39,101 +37,86 @@
             background: white;
             color: black;
         }
-        #cloud {
-            cursor: pointer;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        #countdown {
-            font-size: 24px;
-            font-weight: bold;
+        #output {
+            font-size: 20px;
             background: rgba(0, 0, 0, 0.5);
             padding: 20px;
             border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
             min-width: 300px;
             margin-top: 20px;
-        }
-        .time-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .label {
-            font-size: 16px;
-        }
-        .rain {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            width: 2px;
-            height: 10px;
-            background: white;
-            opacity: 0.7;
-            animation: rain-fall 1s linear infinite;
-        }
-        @keyframes rain-fall {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100vh); }
         }
     </style>
 </head>
 <body>
     <div class="buttons">
-        <button class="button">الرئيسية</button>
-        <button class="button">الإعدادات</button>
-        <button class="button" id="cloud">☁️ بدء المطر</button>
+        <button class="button" onclick="generateCountdown()">العد التنازلي</button>
+        <button class="button" onclick="generateHistoricalSelf()">حياتك التاريخية</button>
+        <button class="button" onclick="showPastView()">منظر من الماضي</button>
+        <button class="button" onclick="simulateWhatIf()">ماذا لو؟</button>
+        <button class="button" onclick="generateDreamInterpretation()">تفسير الأحلام</button>
+        <button class="button" onclick="createTimeCapsule()">كبسولة الزمن</button>
+        <button class="button" onclick="randomLifeChallenge()">تحدي الحياة</button>
+        <button class="button" onclick="aiStoryBuilder()">بناء قصة بالذكاء الاصطناعي</button>
+        <button class="button" onclick="moodMusicArt()">فن وموسيقى حسب المزاج</button>
+        <button class="button" onclick="globalWindowView()">منظر النافذة العالمي</button>
+        <button class="button" onclick="interactiveEscapeRoom()">غرفة الهروب التفاعلية</button>
+        <button class="button" onclick="futurePredictor()">توقعات المستقبل</button>
+        <button class="button" onclick="lostAndFound()">المفقودات والموجودات</button>
+        <button class="button" onclick="alternateUniverse()">هويتك في كون آخر</button>
     </div>
-    <h1>العد التنازلي حتى 18 ماي</h1>
-    <div id="countdown">
-        <div class="time-box"><span id="days"></span><span class="label">يوم</span></div>
-        <div class="time-box"><span id="hours"></span><span class="label">ساعة</span></div>
-        <div class="time-box"><span id="minutes"></span><span class="label">دقيقة</span></div>
-        <div class="time-box"><span id="seconds"></span><span class="label">ثانية</span></div>
-    </div>
+    <h1>تجارب تفاعلية</h1>
+    <div id="output">اضغط على أحد الأزرار لرؤية التجربة.</div>
     <script>
-        let rainInterval;
-        function createRain() {
-            const rainDrop = document.createElement("div");
-            rainDrop.classList.add("rain");
-            rainDrop.style.left = `${Math.random() * 100}vw`;
-            document.body.appendChild(rainDrop);
-            setTimeout(() => rainDrop.remove(), 1000);
+        function generateCountdown() {
+            document.getElementById("output").innerText = "العد التنازلي قادم قريبًا!";
         }
-        function toggleRain() {
-            if (rainInterval) {
-                clearInterval(rainInterval);
-                rainInterval = null;
-                document.body.style.background = "#023047";
-            } else {
-                rainInterval = setInterval(createRain, 100);
-                document.body.style.background = "black";
-            }
+        function generateHistoricalSelf() {
+            const eras = ["العصر العباسي", "العصر الفرعوني", "العصر العثماني", "العصر الروماني"];
+            const jobs = ["فيلسوف", "تاجر", "محارب", "فلكي", "مؤرخ"];
+            let era = eras[Math.floor(Math.random() * eras.length)];
+            let job = jobs[Math.floor(Math.random() * jobs.length)];
+            document.getElementById("output").innerText = `في ${era}، كنت ستكون ${job}!`;
         }
-        document.getElementById("cloud").addEventListener("click", toggleRain);
-        function updateCountdown() {
-            const now = new Date().getTime();
-            let targetYear = new Date().getFullYear();
-            let targetDate = new Date(targetYear, 4, 18, 0, 0, 0).getTime();
-            if (now > targetDate) {
-                targetYear++;
-                targetDate = new Date(targetYear, 4, 18, 0, 0, 0).getTime();
-            }
-            const timeLeft = targetDate - now;
-            if (timeLeft <= 0) {
-                document.getElementById("countdown").innerHTML = "انتهى العد التنازلي!";
-                return;
-            }
-            document.getElementById("days").innerText = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            document.getElementById("hours").innerText = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-            document.getElementById("minutes").innerText = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-            document.getElementById("seconds").innerText = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
+        function showPastView() {
+            const places = ["الأهرامات سنة 1800", "دمشق سنة 1500", "القسطنطينية سنة 1400", "بغداد سنة 1200"];
+            let place = places[Math.floor(Math.random() * places.length)];
+            document.getElementById("output").innerText = `منظر الماضي: ${place}`;
         }
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
+        function simulateWhatIf() {
+            const scenarios = ["ماذا لو استمرت الدولة الأندلسية؟", "ماذا لو لم يخترع الإنسان الكهرباء؟", "ماذا لو لم تحدث الحرب العالمية الثانية؟"];
+            let scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+            document.getElementById("output").innerText = scenario;
+        }
+        function generateDreamInterpretation() {
+            document.getElementById("output").innerText = "تحليل الأحلام قريبًا!";
+        }
+        function createTimeCapsule() {
+            document.getElementById("output").innerText = "كبسولة الزمن في انتظارك!";
+        }
+        function randomLifeChallenge() {
+            document.getElementById("output").innerText = "جرب تحديًا جديدًا اليوم!";
+        }
+        function aiStoryBuilder() {
+            document.getElementById("output").innerText = "بناء قصة مخصصة لك!";
+        }
+        function moodMusicArt() {
+            document.getElementById("output").innerText = "موسيقى وفن بناءً على مزاجك!";
+        }
+        function globalWindowView() {
+            document.getElementById("output").innerText = "اكتشف مناظر النوافذ حول العالم!";
+        }
+        function interactiveEscapeRoom() {
+            document.getElementById("output").innerText = "هل يمكنك الهروب من الغرفة؟";
+        }
+        function futurePredictor() {
+            document.getElementById("output").innerText = "استكشف مستقبلك المحتمل!";
+        }
+        function lostAndFound() {
+            document.getElementById("output").innerText = "هل فقدت شيئًا؟ ابحث عنه هنا!";
+        }
+        function alternateUniverse() {
+            document.getElementById("output").innerText = "من ستكون في عالم آخر؟";
+        }
     </script>
 </body>
 </html>
