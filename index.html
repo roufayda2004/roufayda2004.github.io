@@ -58,9 +58,41 @@
             min-width: 300px;
             margin-top: 20px;
         }
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            background-color: #111;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        .nav-item {
+            margin: 0 15px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .nav-item:hover {
+            color: #f39c12;
+        }
+        .icon-home::before {
+            content: "\2302";
+        }
+        .icon-fire::before {
+            content: "\1F525";
+        }
+        .icon-settings::before {
+            content: "\2699";
+        }
     </style>
 </head>
 <body>
+    <div class="nav-bar">
+        <div class="nav-item icon-home"></div>
+        <div class="nav-item icon-fire"></div>
+        <div class="nav-item icon-settings"></div>
+    </div>
     <div id="message">إن لم تستطع الانتظار فتذكر أن هالة تنتظرك بشوق 🥰</div>
     <h1>العد التنازلي حتى 18 ماي</h1>
     <div id="countdown">
@@ -70,7 +102,6 @@
         <div class="time-box"><span id="seconds"></span><span class="label">ثانية</span></div>
     </div>
     <div id="quote"></div>
-
     <script>
         const quotes = [
             "الصبر مفتاح الفرج.",
@@ -82,39 +113,32 @@
             "الصبر نصف الإيمان.",
             "مع الصبر يأتي النصر."
         ];
-
         function updateCountdown() {
             const now = new Date().getTime();
             let targetYear = new Date().getFullYear();
             let targetDate = new Date(targetYear, 4, 18, 0, 0, 0).getTime();
-
             if (now > targetDate) {
                 targetYear++;
                 targetDate = new Date(targetYear, 4, 18, 0, 0, 0).getTime();
             }
-
             const timeLeft = targetDate - now;
             if (timeLeft <= 0) {
                 document.getElementById("countdown").innerHTML = "انتهى العد التنازلي!";
                 return;
             }
-
             const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
             const hours = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
             const minutes = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
             const seconds = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
-
             document.getElementById("days").innerText = days;
             document.getElementById("hours").innerText = hours;
             document.getElementById("minutes").innerText = minutes;
             document.getElementById("seconds").innerText = seconds;
         }
-
         function updateQuote() {
             const index = new Date().getDate() % quotes.length;
             document.getElementById("quote").innerHTML = quotes[index];
         }
-
         updateCountdown();
         updateQuote();
         setInterval(updateCountdown, 1000);
