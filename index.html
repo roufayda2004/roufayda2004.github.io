@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE html><html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +16,7 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+            position: relative;
         }
         h1 {
             font-size: 28px;
@@ -65,7 +65,10 @@
             padding: 10px 20px;
             border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
         }
         .nav-item {
             margin: 0 15px;
@@ -88,11 +91,6 @@
     </style>
 </head>
 <body>
-    <div class="nav-bar">
-        <div class="nav-item icon-home"></div>
-        <div class="nav-item icon-fire"></div>
-        <div class="nav-item icon-settings"></div>
-    </div>
     <div id="message">إن لم تستطع الانتظار فتذكر أن هالة تنتظرك بشوق 🥰</div>
     <h1>العد التنازلي حتى 18 ماي</h1>
     <div id="countdown">
@@ -102,6 +100,11 @@
         <div class="time-box"><span id="seconds"></span><span class="label">ثانية</span></div>
     </div>
     <div id="quote"></div>
+    <div class="nav-bar">
+        <div class="nav-item icon-home"></div>
+        <div class="nav-item icon-fire"></div>
+        <div class="nav-item icon-settings"></div>
+    </div>
     <script>
         const quotes = [
             "الصبر مفتاح الفرج.",
