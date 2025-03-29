@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العد التنازلي حتى 18 ماي</title>
+    <title>العد التنازلي + تأثير المطر</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,6 +17,7 @@
             height: 100vh;
             margin: 0;
             position: relative;
+            overflow: hidden;
         }
         h1 {
             font-size: 28px;
@@ -58,35 +59,32 @@
             min-width: 300px;
             margin-top: 20px;
         }
-        .nav-bar {
-            display: flex;
-            align-items: center;
-            background-color: #111;
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .nav-item {
-            margin: 0 15px;
-            color: white;
-            font-size: 24px;
+        .cloud {
+            background: gray;
+            padding: 20px;
+            border-radius: 50%;
             cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
         }
-        .nav-item:hover {
-            color: #f39c12;
+        .rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
         }
-        .icon-home::before {
-            content: "\2302";
+        .drop {
+            position: absolute;
+            color: lime;
+            font-size: 16px;
+            animation: fall linear infinite;
         }
-        .icon-fire::before {
-            content: "\1F525";
-        }
-        .icon-settings::before {
-            content: "\2699";
+        @keyframes fall {
+            from { transform: translateY(-100%); opacity: 1; }
+            to { transform: translateY(100vh); opacity: 0; }
         }
     </style>
 </head>
@@ -100,21 +98,12 @@
         <div class="time-box"><span id="seconds"></span><span class="label">ثانية</span></div>
     </div>
     <div id="quote"></div>
-    <div class="nav-bar">
-        <div class="nav-item icon-home"></div>
-        <div class="nav-item icon-fire"></div>
-        <div class="nav-item icon-settings"></div>
-    </div>
+    <div class="cloud" onclick="toggleRain()">☁️ اضغط لبدء/إيقاف المطر</div>
+    <div class="rain"></div>
     <script>
         const quotes = [
-            "الصبر مفتاح الفرج.",
-            "الصبر مر، لكن ثماره حلوة.",
-            "بالصبر تحقق الآمال.",
-            "الصبر شجرة جذورها مرّة وثمارها حلوة.",
-            "من صبر ظفر.",
-            "لا شيء يعادل الصبر في القوة.",
-            "الصبر نصف الإيمان.",
-            "مع الصبر يأتي النصر."
+            "الصبر مفتاح الفرج.", "الصبر مر، لكن ثماره حلوة.", "بالصبر تحقق الآمال.", "الصبر شجرة جذورها مرّة وثمارها حلوة.",
+            "من صبر ظفر.", "لا شيء يعادل الصبر في القوة.", "الصبر نصف الإيمان.", "مع الصبر يأتي النصر."
         ];
         function updateCountdown() {
             const now = new Date().getTime();
@@ -129,18 +118,34 @@
                 document.getElementById("countdown").innerHTML = "انتهى العد التنازلي!";
                 return;
             }
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-            const minutes = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-            const seconds = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
-            document.getElementById("days").innerText = days;
-            document.getElementById("hours").innerText = hours;
-            document.getElementById("minutes").innerText = minutes;
-            document.getElementById("seconds").innerText = seconds;
+            document.getElementById("days").innerText = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").innerText = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
         }
         function updateQuote() {
-            const index = new Date().getDate() % quotes.length;
-            document.getElementById("quote").innerHTML = quotes[index];
+            document.getElementById("quote").innerHTML = quotes[new Date().getDate() % quotes.length];
+        }
+        let raining = false;
+        let rainContainer = document.querySelector(".rain");
+        let interval;
+        function toggleRain() {
+            if (raining) {
+                clearInterval(interval);
+                rainContainer.innerHTML = "";
+            } else {
+                interval = setInterval(createRainDrop, 100);
+            }
+            raining = !raining;
+        }
+        function createRainDrop() {
+            let drop = document.createElement("div");
+            drop.classList.add("drop");
+            drop.innerText = "0";
+            drop.style.left = Math.random() * window.innerWidth + "px";
+            drop.style.animationDuration = (Math.random() * 2 + 2) + "s";
+            rainContainer.appendChild(drop);
+            setTimeout(() => drop.remove(), 4000);
         }
         updateCountdown();
         updateQuote();
