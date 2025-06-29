@@ -1,122 +1,219 @@
 <!DOCTYPE html><html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تجارب تفاعلية</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #023047;
-            color: white;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .button {
-            background: transparent;
-            border: 2px solid white;
-            padding: 10px 15px;
-            font-size: 16px;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .button:hover {
-            background: white;
-            color: black;
-        }
-        #output {
-            font-size: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 300px;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متابعة جمع المال - 30 يوم</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      text-align: center;
+      padding: 20px;
+    }
+    .day-inputs {
+      display: flex;
+      overflow-x: auto;
+      gap: 5px;
+      margin-bottom: 20px;
+    }
+    .day-inputs input {
+      width: 60px;
+      padding: 5px;
+      text-align: center;
+      flex: 0 0 auto;
+      font-size: 14px;
+    }
+    .stats {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 30px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 25px;
+      background: #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .progress {
+      height: 100%;
+      background-color: #4caf50;
+      text-align: center;
+      color: white;
+      line-height: 25px;
+    }
+    button, input[type="file"] {
+      margin: 5px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .reset-btn { background-color: #f44336; color: white; }
+    @media print {
+      button, canvas, .reset-btn, input[type="file"] { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <div class="buttons">
-        <button class="button" onclick="generateCountdown()">العد التنازلي حتى 18 ماي 2025</button>
-        <button class="button" onclick="generateHistoricalSelf()">حياتك التاريخية</button>
-        <button class="button" onclick="showPastView()">منظر من الماضي</button>
-        <button class="button" onclick="simulateWhatIf()">ماذا لو؟</button>
-        <button class="button" onclick="generateDreamInterpretation()">تفسير الأحلام</button>
-        <button class="button" onclick="createTimeCapsule()">كبسولة الزمن</button>
-        <button class="button" onclick="randomLifeChallenge()">تحدي الحياة</button>
-        <button class="button" onclick="aiStoryBuilder()">بناء قصة بالذكاء الاصطناعي</button>
-        <button class="button" onclick="moodMusicArt()">فن وموسيقى حسب المزاج</button>
-        <button class="button" onclick="globalWindowView()">منظر النافذة العالمي</button>
-        <button class="button" onclick="interactiveEscapeRoom()">غرفة الهروب التفاعلية</button>
-        <button class="button" onclick="futurePredictor()">توقعات المستقبل</button>
-        <button class="button" onclick="lostAndFound()">المفقودات والموجودات</button>
-        <button class="button" onclick="alternateUniverse()">هويتك في كون آخر</button>
-    </div>
-    <h1>تجارب تفاعلية</h1>
-    <div id="output">اضغط على أحد الأزرار لرؤية التجربة.</div>
-    <script>
-        function generateCountdown() {
-            document.getElementById("output").innerText = "العد التنازلي قادم قريبًا!";
+  <h1>موقع متابعة جمع المال - 30 يوم</h1>
+  <div class="day-inputs" id="inputsContainer"></div>
+  <p>🎯 الهدف: <input type="number" id="targetInput" value="50000" onchange="updateTarget()"> دج</p>
+  <button onclick="calculate()">احسب الآن</button>
+  <button onclick="window.print()">🖨️ طباعة</button>
+  <button class="reset-btn" onclick="resetData()">🔄 إعادة تعيين</button>
+  <button onclick="exportCSV()">📁 تحميل كـ CSV</button>
+  <button onclick="exportJSON()">⬇️ نسخ احتياطي</button>
+  <button onclick="importJSON()">⬆️ استرجاع</button>
+  <input type="file" id="jsonFile" style="display:none" onchange="handleImport(event)">  <div class="progress-bar">
+    <div class="progress" id="progressBar">0%</div>
+  </div>
+  <div class="stats">
+    <p>💰 المبلغ المجموع حتى الآن: <span id="collected">0</span> دج</p>
+    <p>💼 المبلغ المتبقي للوصول إلى الهدف: <span id="remaining">0</span> دج</p>
+    <p>📆 المبلغ اليومي المطلوب: <span id="dailyNeeded">0</span> دج</p>
+    <p>📈 أعلى مبلغ في يوم: <span id="maxDay">0</span> دج</p>
+    <p>📉 أقل مبلغ (≠0): <span id="minDay">0</span> دج</p>
+    <p>📊 متوسط المبلغ اليومي: <span id="avgPerDay">0</span> دج</p>
+  </div>
+  <canvas id="progressChart"></canvas>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <script>
+    let target = parseInt(localStorage.getItem('target')) || 50000;
+    document.getElementById('targetInput').value = target;
+
+    function updateTarget() {
+      target = parseInt(document.getElementById('targetInput').value) || 0;
+      localStorage.setItem('target', target);
+      calculate();
+    }
+
+    const container = document.getElementById('inputsContainer');
+    for (let i = 1; i <= 30; i++) {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = 0;
+      input.placeholder = `يوم ${i}`;
+      input.className = 'day';
+      input.value = localStorage.getItem(`day${i}`) || '';
+      input.addEventListener('input', () => {
+        localStorage.setItem(`day${i}`, input.value);
+      });
+      container.appendChild(input);
+    }
+
+    function calculate() {
+      const inputs = document.querySelectorAll('.day');
+      let total = 0, filledDays = 0;
+      let values = [], min = Infinity, max = -Infinity;
+
+      inputs.forEach((input, i) => {
+        const val = parseFloat(input.value);
+        if (!isNaN(val)) {
+          total += val;
+          filledDays++;
+          if (val > max) max = val;
+          if (val < min && val > 0) min = val;
         }
-        function generateHistoricalSelf() {
-            const eras = ["العصر العباسي", "العصر الفرعوني", "العصر العثماني", "العصر الروماني"];
-            const jobs = ["فيلسوف", "تاجر", "محارب", "فلكي", "مؤرخ"];
-            let era = eras[Math.floor(Math.random() * eras.length)];
-            let job = jobs[Math.floor(Math.random() * jobs.length)];
-            document.getElementById("output").innerText = `في ${era}، كنت ستكون ${job}!`;
-        }
-        function showPastView() {
-            const places = ["الأهرامات سنة 1800", "دمشق سنة 1500", "القسطنطينية سنة 1400", "بغداد سنة 1200"];
-            let place = places[Math.floor(Math.random() * places.length)];
-            document.getElementById("output").innerText = `منظر الماضي: ${place}`;
-        }
-        function simulateWhatIf() {
-            const scenarios = ["ماذا لو استمرت الدولة الأندلسية؟", "ماذا لو لم يخترع الإنسان الكهرباء؟", "ماذا لو لم تحدث الحرب العالمية الثانية؟"];
-            let scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-            document.getElementById("output").innerText = scenario;
-        }
-        function generateDreamInterpretation() {
-            document.getElementById("output").innerText = "تحليل الأحلام قريبًا!";
-        }
-        function createTimeCapsule() {
-            document.getElementById("output").innerText = "كبسولة الزمن في انتظارك!";
-        }
-        function randomLifeChallenge() {
-            document.getElementById("output").innerText = "جرب تحديًا جديدًا اليوم!";
-        }
-        function aiStoryBuilder() {
-            document.getElementById("output").innerText = "بناء قصة مخصصة لك!";
-        }
-        function moodMusicArt() {
-            document.getElementById("output").innerText = "موسيقى وفن بناءً على مزاجك!";
-        }
-        function globalWindowView() {
-            document.getElementById("output").innerText = "اكتشف مناظر النوافذ حول العالم!";
-        }
-        function interactiveEscapeRoom() {
-            document.getElementById("output").innerText = "هل يمكنك الهروب من الغرفة؟";
-        }
-        function futurePredictor() {
-            document.getElementById("output").innerText = "استكشف مستقبلك المحتمل!";
-        }
-        function lostAndFound() {
-            document.getElementById("output").innerText = "هل فقدت شيئًا؟ ابحث عنه هنا!";
-        }
-        function alternateUniverse() {
-            document.getElementById("output").innerText = "من ستكون في عالم آخر؟";
-        }
-    </script>
-</body>
+        values[i] = isNaN(val) ? 0 : val;
+      });
+
+      const remaining = Math.max(0, target - total);
+      const daysLeft = 30 - filledDays;
+      const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
+      const avgPerDay = filledDays > 0 ? Math.round(total / filledDays) : 0;
+      const percentage = Math.min(100, Math.floor((total / target) * 100));
+
+      document.getElementById('collected').innerText = total;
+      document.getElementById('remaining').innerText = remaining;
+      document.getElementById('dailyNeeded').innerText = dailyNeeded;
+      document.getElementById('avgPerDay').innerText = avgPerDay;
+      document.getElementById('maxDay').innerText = max > 0 ? max : 0;
+      document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
+      document.getElementById('progressBar').style.width = percentage + '%';
+      document.getElementById('progressBar').innerText = percentage + '%';
+
+      inputs.forEach(input => {
+        const val = parseFloat(input.value);
+        input.style.backgroundColor = val >= dailyNeeded ? '#c8e6c9' : (val > 0 ? '#ffcdd2' : '');
+      });
+
+      updateChart(values);
+    }
+
+    let chart;
+    function updateChart(data) {
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Array.from({ length: 30 }, (_, i) => `يوم ${i + 1}`),
+          datasets: [{
+            label: 'الدخل اليومي',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+
+    function resetData() {
+      if (confirm("هل أنت متأكد أنك تريد إعادة تعيين كل البيانات؟")) {
+        for (let i = 1; i <= 30; i++) localStorage.removeItem(`day${i}`);
+        localStorage.removeItem('target');
+        location.reload();
+      }
+    }
+
+    function exportCSV() {
+      let csv = 'يوم,المبلغ\n';
+      document.querySelectorAll('.day').forEach((input, i) => {
+        csv += `يوم ${i + 1},${input.value || 0}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'money-tracker.csv';
+      a.click();
+    }
+
+    function exportJSON() {
+      const data = {};
+      for (let i = 1; i <= 30; i++) data[`day${i}`] = localStorage.getItem(`day${i}`) || '0';
+      data.target = target;
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'backup.json';
+      a.click();
+    }
+
+    function importJSON() {
+      document.getElementById('jsonFile').click();
+    }
+
+    function handleImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const data = JSON.parse(reader.result);
+        for (let key in data) localStorage.setItem(key, data[key]);
+        location.reload();
+      };
+      reader.readAsText(file);
+    }
+
+    window.addEventListener('load', () => {
+      calculate();
+      const todayIndex = new Date().getDate() - 1;
+      document.querySelectorAll('.day')[todayIndex]?.focus();
+    });
+  </script></body>
 </html>
