@@ -2,14 +2,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>متابعة جمع المال - 30 يوم</title>
+  <title>متابعة الأهداف - مال وصحة</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       direction: rtl;
-      text-align: center;
+      margin: 0;
+      display: flex;
+    }
+    aside {
+      width: 260px;
+      background-color: #f7f7f7;
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    aside h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    aside label, aside button {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    aside input {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+    }
+    aside .nav {
+      margin-top: 20px;
+    }
+    aside .nav button {
+      background-color: #e0e0e0;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    main {
+      flex-grow: 1;
       padding: 20px;
     }
+    .hidden { display: none; }
     .day-inputs {
       display: flex;
       overflow-x: auto;
@@ -21,20 +55,12 @@
       padding: 5px;
       text-align: center;
       flex: 0 0 auto;
-      font-size: 14px;
     }
-    .stats {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-    canvas {
-      max-width: 100%;
-      margin-top: 30px;
-    }
+    .stats { margin-top: 20px; font-size: 18px; }
     .progress-bar {
       width: 100%;
       height: 25px;
-      background: #e0e0e0;
+      background: #ccc;
       border-radius: 12px;
       overflow: hidden;
       margin-top: 20px;
@@ -46,174 +72,150 @@
       color: white;
       line-height: 25px;
     }
-    button, input[type="file"] {
-      margin: 5px;
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    canvas { max-width: 100%; margin-top: 30px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
-    .reset-btn { background-color: #f44336; color: white; }
-    @media print {
-      button, canvas, .reset-btn, input[type="file"] { display: none; }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    .motivation {
+      background: #e8f5e9;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 5px;
+    }
+    .alert {
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>موقع متابعة جمع المال - 30 يوم</h1>
-  <div class="day-inputs" id="inputsContainer"></div>
-  <p>🎯 الهدف: <input type="number" id="targetInput" value="50000" onchange="updateTarget()"> دج</p>
-  <button onclick="calculate()">احسب الآن</button>
-  <button onclick="window.print()">🖨️ طباعة</button>
-  <button class="reset-btn" onclick="resetData()">🔄 إعادة تعيين</button>
-  <button onclick="exportCSV()">📁 تحميل كـ CSV</button>
-  <button onclick="exportJSON()">⬇️ نسخ احتياطي</button>
-  <button onclick="importJSON()">⬆️ استرجاع</button>
-  <input type="file" id="jsonFile" style="display:none" onchange="handleImport(event)">  <div class="progress-bar">
-    <div class="progress" id="progressBar">0%</div>
-  </div>
-  <div class="stats">
-    <p>💰 المبلغ المجموع حتى الآن: <span id="collected">0</span> دج</p>
-    <p>💼 المبلغ المتبقي للوصول إلى الهدف: <span id="remaining">0</span> دج</p>
-    <p>📆 المبلغ اليومي المطلوب: <span id="dailyNeeded">0</span> دج</p>
-    <p>📈 أعلى مبلغ في يوم: <span id="maxDay">0</span> دج</p>
-    <p>📉 أقل مبلغ (≠0): <span id="minDay">0</span> دج</p>
-    <p>📊 متوسط المبلغ اليومي: <span id="avgPerDay">0</span> دج</p>
-  </div>
-  <canvas id="progressChart"></canvas>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <script>
-    let target = parseInt(localStorage.getItem('target')) || 50000;
-    document.getElementById('targetInput').value = target;
+  <aside>
+    <h2>⚙️ تخصيص</h2>
+    <div id="common-controls">
+      <label>🎯 الهدف المالي:</label>
+      <input type="number" id="targetInput" value="50000" onchange="updateTarget()">
+      <button onclick="calculate()">احسب</button>
+      <button onclick="resetData()">🔄 إعادة تعيين</button>
+    </div><div class="nav">
+  <button onclick="showSection('money')">💰 تتبع المال</button>
+  <button onclick="showSection('smoking')">🚭 خطة الإقلاع عن التدخين</button>
+</div>
 
-    function updateTarget() {
-      target = parseInt(document.getElementById('targetInput').value) || 0;
-      localStorage.setItem('target', target);
-      calculate();
+  </aside>  <main>
+    <section id="money-section">
+      <h1>موقع متابعة جمع المال - 30 يوم</h1>
+      <div class="day-inputs" id="inputsContainer"></div>
+      <div class="progress-bar"><div class="progress" id="progressBar">0%</div></div>
+      <div class="stats">
+        <p>💰 المبلغ المجموع: <span id="collected">0</span> دج</p>
+        <p>💼 المتبقي للهدف: <span id="remaining">0</span> دج</p>
+        <p>📆 المبلغ اليومي المطلوب: <span id="dailyNeeded">0</span> دج</p>
+        <p>📈 الأعلى: <span id="maxDay">0</span> دج</p>
+        <p>📉 الأدنى: <span id="minDay">0</span> دج</p>
+        <p>📊 المتوسط: <span id="avgPerDay">0</span> دج</p>
+      </div>
+      <canvas id="progressChart"></canvas>
+    </section><section id="smoking-section" class="hidden">
+  <h1>🚭 خطة الإقلاع عن التدخين</h1>
+  <label>📅 مدة الإقلاع (أيام): <input type="number" id="quitDays" value="30"></label>
+  <label>💸 ثمن العلبة (دج): <input type="number" id="cigPrice" value="300"></label>
+  <label>🚬 عدد السجائر في العلبة: <input type="number" id="cigsPerPack" value="20"></label>
+  <label>📆 معدل التدخين اليومي الحالي: <input type="number" id="currentCigs" value="10"></label>
+  <label>📅 سنوات التدخين: <input type="number" id="smokeYears" value="5"></label>
+  <button onclick="generateQuitPlan()">ابدأ الخطة</button>
+  <div id="quitResults"></div>
+  <table id="quitTable"></table>
+  <div class="alert" id="warningMsg"></div>
+  <div class="motivation" id="motivationalQuote"></div>
+  <canvas id="smokeChart"></canvas>
+</section>
+
+  </main>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <script>
+    function showSection(id) {
+      document.getElementById('money-section').classList.add('hidden');
+      document.getElementById('smoking-section').classList.add('hidden');
+      document.getElementById(id + '-section').classList.remove('hidden');
     }
 
-    const container = document.getElementById('inputsContainer');
-    for (let i = 1; i <= 30; i++) {
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = 0;
-      input.placeholder = `يوم ${i}`;
-      input.className = 'day';
-      input.value = localStorage.getItem(`day${i}`) || '';
-      input.addEventListener('input', () => {
-        localStorage.setItem(`day${i}`, input.value);
-      });
-      container.appendChild(input);
+    function generateQuitPlan() {
+      const days = parseInt(document.getElementById('quitDays').value);
+      const price = parseFloat(document.getElementById('cigPrice').value);
+      const perPack = parseInt(document.getElementById('cigsPerPack').value);
+      const daily = parseInt(document.getElementById('currentCigs').value);
+      const years = parseInt(document.getElementById('smokeYears').value);
+
+      let nicotinePerCig = 1;
+      let totalCigs = daily * days;
+      let totalNicotine = totalCigs * nicotinePerCig;
+      let totalCost = Math.ceil((totalCigs / perPack) * price);
+
+      let plan = `<p>📅 المدة: ${days} يوم</p>`;
+      plan += `<p>💨 النيكوتين المحتمل: ${totalNicotine} ملغ</p>`;
+      plan += `<p>💸 التوفير المحتمل: ${totalCost} دج</p>`;
+
+      let table = '<tr><th>اليوم</th><th>العدد المسموح</th><th>المُسجل</th></tr>';
+      let data = [];
+      for (let i = 1; i <= days; i++) {
+        let allowed = Math.round(daily * (1 - (i / days)));
+        table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number' id='smokedDay${i}' style='width:50px' oninput='checkLimit(${i}, ${allowed})'></td></tr>`;
+        data.push(allowed);
+      }
+
+      document.getElementById('quitResults').innerHTML = plan;
+      document.getElementById('quitTable').innerHTML = table;
+
+      const quotes = [
+        '💪 تذكر: كل سيجارة أقل تقربك من حياة صحية.',
+        '🚀 الإرادة أقوى من العادة.',
+        '🌿 صحتك تستحق التغيير.',
+        '⏳ كل دقيقة بدون تدخين تمنحك وقتاً إضافياً للحياة.'
+      ];
+      document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+      updateSmokeChart(data);
     }
 
-    function calculate() {
-      const inputs = document.querySelectorAll('.day');
-      let total = 0, filledDays = 0;
-      let values = [], min = Infinity, max = -Infinity;
-
-      inputs.forEach((input, i) => {
-        const val = parseFloat(input.value);
-        if (!isNaN(val)) {
-          total += val;
-          filledDays++;
-          if (val > max) max = val;
-          if (val < min && val > 0) min = val;
-        }
-        values[i] = isNaN(val) ? 0 : val;
-      });
-
-      const remaining = Math.max(0, target - total);
-      const daysLeft = 30 - filledDays;
-      const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
-      const avgPerDay = filledDays > 0 ? Math.round(total / filledDays) : 0;
-      const percentage = Math.min(100, Math.floor((total / target) * 100));
-
-      document.getElementById('collected').innerText = total;
-      document.getElementById('remaining').innerText = remaining;
-      document.getElementById('dailyNeeded').innerText = dailyNeeded;
-      document.getElementById('avgPerDay').innerText = avgPerDay;
-      document.getElementById('maxDay').innerText = max > 0 ? max : 0;
-      document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
-      document.getElementById('progressBar').style.width = percentage + '%';
-      document.getElementById('progressBar').innerText = percentage + '%';
-
-      inputs.forEach(input => {
-        const val = parseFloat(input.value);
-        input.style.backgroundColor = val >= dailyNeeded ? '#c8e6c9' : (val > 0 ? '#ffcdd2' : '');
-      });
-
-      updateChart(values);
-    }
-
-    let chart;
-    function updateChart(data) {
-      const ctx = document.getElementById('progressChart').getContext('2d');
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Array.from({ length: 30 }, (_, i) => `يوم ${i + 1}`),
-          datasets: [{
-            label: 'الدخل اليومي',
-            data: data,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-          }]
-        },
-        options: { responsive: true, scales: { y: { beginAtZero: true } } }
-      });
-    }
-
-    function resetData() {
-      if (confirm("هل أنت متأكد أنك تريد إعادة تعيين كل البيانات؟")) {
-        for (let i = 1; i <= 30; i++) localStorage.removeItem(`day${i}`);
-        localStorage.removeItem('target');
-        location.reload();
+    function checkLimit(day, allowed) {
+      const input = document.getElementById('smokedDay' + day);
+      const value = parseInt(input.value);
+      const warning = document.getElementById('warningMsg');
+      if (value > allowed) {
+        warning.innerText = `⚠️ اليوم ${day}: لقد تجاوزت العدد المسموح (${allowed})!`; 
+      } else {
+        warning.innerText = '';
       }
     }
 
-    function exportCSV() {
-      let csv = 'يوم,المبلغ\n';
-      document.querySelectorAll('.day').forEach((input, i) => {
-        csv += `يوم ${i + 1},${input.value || 0}\n`;
+    let smokeChart;
+    function updateSmokeChart(data) {
+      const ctx = document.getElementById('smokeChart').getContext('2d');
+      if (smokeChart) smokeChart.destroy();
+      smokeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: data.length }, (_, i) => `يوم ${i + 1}`),
+          datasets: [{
+            label: 'العدد المسموح يومياً',
+            data: data,
+            backgroundColor: 'rgba(76, 175, 80, 0.3)',
+            borderColor: 'rgba(76, 175, 80, 1)',
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
       });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'money-tracker.csv';
-      a.click();
     }
-
-    function exportJSON() {
-      const data = {};
-      for (let i = 1; i <= 30; i++) data[`day${i}`] = localStorage.getItem(`day${i}`) || '0';
-      data.target = target;
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'backup.json';
-      a.click();
-    }
-
-    function importJSON() {
-      document.getElementById('jsonFile').click();
-    }
-
-    function handleImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const data = JSON.parse(reader.result);
-        for (let key in data) localStorage.setItem(key, data[key]);
-        location.reload();
-      };
-      reader.readAsText(file);
-    }
-
-    window.addEventListener('load', () => {
-      calculate();
-      const todayIndex = new Date().getDate() - 1;
-      document.querySelectorAll('.day')[todayIndex]?.focus();
-    });
   </script></body>
 </html>
