@@ -1,115 +1,66 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE html><html lang="ar">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>متابعة الأهداف - مال وصحة</title>
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-  <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --primary: #43cea2;
-      --secondary: #185a9d;
-      --card-bg: rgba(255,255,255,0.97);
-      --light-bg: #f8f8f8;
-      --text-color: #333;
-      --header-height: 70px;
-      --radius: 18px;
-      --shadow: 0 4px 24px rgba(0,0,0,0.09);
-    }
-    * { box-sizing: border-box; }
-
     body {
-      font-family: 'Cairo', Arial, sans-serif;
+      font-family: 'Cairo', sans-serif;
       direction: rtl;
       margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      color: var(--text-color);
-      background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
-      transition: background 0.5s;
+      background: linear-gradient(120deg, #f6d365, #fda085);
+      transition: background 2s ease-in-out;
     }
-    header {
-      background: linear-gradient(90deg, var(--primary) 80%, var(--secondary) 100%);
+    #toggleBg, #toggleSidebar {
+      position: fixed;
+      padding: 10px;
+      background-color: #333;
       color: #fff;
-      border-radius: 0 0 var(--radius) var(--radius);
-      box-shadow: var(--shadow);
-      font-size: 28px;
-      letter-spacing: 1px;
-      padding: 24px 0 18px 0;
-      text-align: center;
-      margin-bottom: 24px;
-      min-height: var(--header-height);
-      position: sticky;
-      top: 0;
-      z-index: 11;
-      user-select: none;
-    }
-    nav {
-      background: none;
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-    nav button {
-      background: linear-gradient(90deg, #43cea2 60%, #185a9d 100%);
-      color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-family: inherit;
-      padding: 10px 28px;
-      margin: 0 5px;
-      box-shadow: 0 2px 10px rgba(67,206,162,0.18);
+      border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      z-index: 1000;
     }
-    nav button:hover, button:focus-visible {
-      background: linear-gradient(90deg, #185a9d, #43cea2);
-      transform: scale(1.07);
+    #toggleBg { top: 10px; left: 10px; }
+    #toggleSidebar { top: 10px; right: 10px; }
+    #sidebar {
+      position: fixed;
+      top: 0;
+      right: -200px;
+      width: 200px;
+      height: 100%;
+      background: linear-gradient(120deg, #43cea2, #185a9d);
+      color: #fff;
+      padding: 10px;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+      transition: right 0.3s;
+      z-index: 999;
     }
-    main {
-      max-width: 820px;
-      margin: auto;
-      padding: 20px 10px;
+    #sidebar.active {
+      right: 0;
     }
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 28px 20px 24px 20px;
-      margin-bottom: 32px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      animation: fadein 0.7s;
-    }
-    .card:hover {
-      transform: translateY(-6px) scale(1.015);
-      box-shadow: 0 8px 32px rgba(67,206,162,0.17);
-    }
-    @keyframes fadein {
-      from { opacity:0; transform: translateY(30px);}
-      to { opacity:1; transform: translateY(0);}
+    #sidebar button {
+      background: #fff;
+      color: #185a9d;
+      border: none;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      width: 100%;
+      font-weight: bold;
+      cursor: pointer;
     }
     .section { display: none; }
-    .section.active { display: block; }
-
-    .inputs-label {
-      font-weight: 700;
-      font-size: 1.1em;
-      margin-bottom: 6px;
-      display: block;
-      color: var(--secondary);
-    }
+    .section.active { display: block; padding: 20px; background: #fff; margin: 20px; border-radius: 10px; }
+    canvas { max-width: 100%; margin-top: 20px; }
     .day-inputs {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
       gap: 8px;
-      margin-bottom: 18px;
+      margin: 10px 0;
     }
     .day-inputs input {
       text-align: center;
@@ -118,239 +69,53 @@
       border: 1px solid #ddd;
       font-size: 16px;
       background: #f6f9fa;
-      transition: border 0.2s;
-    }
-    .day-inputs input:focus {
-      border: 1.5px solid var(--primary);
-      outline: none;
-    }
-    .progress-bar {
-      height: 22px;
-      background: #ececec;
-      border-radius: 12px;
-      overflow: hidden;
-      margin: 18px 0 10px 0;
-      box-shadow: 0 1px 8px #e0e0e0;
-    }
-    .progress {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary) 70%, var(--secondary) 100%);
-      color: #fff;
-      text-align: center;
-      line-height: 22px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 12px;
-      transition: width 0.5s;
-    }
-    .stats p {
-      margin: 7px 0;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .stats i {
-      color: var(--primary);
-      margin-left: 5px;
-      font-size: 18px;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      padding: 7px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-size: 15px;
-      margin-top: 3px;
-    }
-    button {
-      background: linear-gradient(90deg, #43cea2, #185a9d);
-      color: white;
-      border: none;
-      padding: 10px 0;
-      margin: 10px 0;
-      border-radius: 8px;
-      font-size: 17px;
-      font-family: inherit;
-      width: 100%;
-      box-shadow: 0 2px 8px rgba(67,206,162,0.18);
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #185a9d, #43cea2);
-      transform: scale(1.04);
-    }
-    .motivation, .alert {
-      background: linear-gradient(90deg,#e8f5e9 80%,#f6d365 100%);
-      padding: 12px 18px;
-      border-radius: 8px;
-      margin: 12px 0;
-      font-size: 17px;
-      box-shadow: 0 2px 8px #d0e7d7;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
-      background: #fcfcfc;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 1px 8px #e0e0e0;
-      animation: fadein 0.7s;
-    }
-    th, td {
-      border: 1px solid #eee;
-      padding: 11px 8px;
-      font-size: 15px;
-      text-align: center;
-      transition: background 0.2s;
-    }
-    tr:hover td { background: #f1f8f6; }
-    th {
-      background: linear-gradient(90deg, #43cea2 70%, #185a9d 100%);
-      color: #fff;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    /* Responsive */
-    @media (max-width:600px){
-      main {padding: 12px 2px;}
-      .card {padding: 15px 6px;}
-      .day-inputs {grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));}
-      header {font-size: 19px; padding: 13px 0;}
-    }
-    /* Custom switches & toggles */
-    #toggleBg, #toggleSidebar {
-      position: fixed;
-      left: 11px;
-      background: #333;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 7px;
-      cursor: pointer;
-      z-index: 9999;
-      font-size: 18px;
-      opacity: 0.84;
-      box-shadow: 0 2px 8px #aaa;
-      transition: background 0.2s;
-    }
-    #toggleBg { top: 11px; }
-    #toggleSidebar { top: 50px; }
-    #toggleBg:hover, #toggleSidebar:hover { background: #185a9d; }
-
-    #sidebar {
-      position: fixed;
-      top: 0;
-      left: -260px;
-      width: 260px;
-      height: 100%;
-      background: linear-gradient(120deg, #43cea2 80%, #f6d365 100%);
-      box-shadow: 2px 0 7px rgba(24,90,157,0.14);
-      padding: 28px 18px 0 18px;
-      transition: left 0.32s;
-      z-index: 999;
-      color: #333;
-      border-radius: 0 20px 20px 0;
-    }
-    #sidebar.active { left: 0; }
-    #sidebar label {
-      display: block;
-      margin: 16px 0 8px;
-      font-weight: bold;
-    }
-    #sidebar input[type="number"] { width: 100%; }
-    /* Animations */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(24px);
-      animation: fadein 0.6s forwards;
     }
   </style>
 </head>
 <body>
-  <button id="toggleBg" onclick="toggleBackground()" title="تغيير الخلفية">
-    <i class="fa-solid fa-paint-roller"></i>
-  </button>
-  <button id="toggleSidebar" onclick="toggleSidebar()" title="القائمة الجانبية">
-    <i class="fa-solid fa-bars"></i>
-  </button>
+  <button id="toggleBg">🎨 الخلفية</button>
+  <button id="toggleSidebar">📋 القائمة</button>
   <div id="sidebar">
-    <h3><i class="fa-solid fa-gears"></i> إعدادات إضافية</h3>
-    <label><i class="fa-solid fa-bullseye"></i> تغيير هدف المال:
-      <input type="number" id="sidebarTarget" onchange="updateTargetFromSidebar()">
-    </label>
+    <button onclick="showSection('money')">💰 المال</button>
+    <button onclick="showSection('smoking')">🚭 التدخين</button>
   </div>
-  <header>
-    <i class="fa-solid fa-chart-column"></i>
-    تطبيق تتبع الأهداف - مال وصحة
-  </header>
-  <nav>
-    <button onclick="showSection('money')"><i class="fa-solid fa-coins"></i> المال</button>
-    <button onclick="showSection('smoking')"><i class="fa-solid fa-ban-smoking"></i> التدخين</button>
-  </nav>
+  <header><h1>📊 تطبيق تتبع الأهداف - مال وصحة</h1></header>
   <main>
-    <!-- المال -->
-    <section id="money" class="section card active">
-      <h2><i class="fa-solid fa-vault"></i> جمع المال - 30 يوم</h2>
-      <label class="inputs-label"><i class="fa-solid fa-bullseye"></i> الهدف المالي:
-        <input type="number" id="targetInput" value="50000" onchange="updateTarget()">
-      </label>
-      <div class="day-inputs" id="inputsContainer"></div>
-      <div class="progress-bar">
-        <div class="progress" id="progressBar">0%</div>
-      </div>
-      <div class="stats">
-        <p><i class="fa-solid fa-wallet"></i> المبلغ المجموع: <span id="collected">0</span> دج</p>
-        <p><i class="fa-solid fa-sack-dollar"></i> المتبقي: <span id="remaining">0</span> دج</p>
-        <p><i class="fa-solid fa-calendar-day"></i> المطلوب/يوم: <span id="dailyNeeded">0</span> دج</p>
-        <p><i class="fa-solid fa-arrow-up"></i> الأعلى: <span id="maxDay">0</span> دج</p>
-        <p><i class="fa-solid fa-arrow-down"></i> الأدنى: <span id="minDay">0</span> دج</p>
-        <p><i class="fa-solid id="avgPerDay">0</span> دج</p>
-      </div>
-      <button onclick="calculate()"><i class="fa-solid fa-calculator"></i> حساب</button>
-      <button onclick="resetData()"><i class="fa-solid fa-rotate"></i> إعادة تعيين</button>
-      <canvas id="progressChart"></canvas>
+    <section id="money" class="section active">
+      <h2>قسم المال</h2>
+      <input type="number" id="targetInput" value="50000" onchange="updateTarget()">
+      <div id="inputsContainer" class="day-inputs"></div>
+      <p>المجموع: <span id="collected">0</span></p>
+      <p>المتبقي: <span id="remaining">0</span></p>
+      <p>المطلوب/يوم: <span id="dailyNeeded">0</span></p>
+      <p>الأعلى: <span id="maxDay">0</span></p>
+      <p>الأدنى: <span id="minDay">0</span></p>
+      <p>المتوسط: <span id="avgPerDay">0</span></p>
+      <button onclick="calculate()">حساب</button>
+      <canvas id="moneyChart"></canvas>
     </section>
-    <!-- التدخين -->
-    <section id="smoking" class="section card">
-      <h2><i class="fa-solid fa-ban-smoking"></i> خطة الإقلاع</h2>
-      <label class="inputs-label"><i class="fa-solid fa-calendar-days"></i> عدد الأيام:
-        <input type="number" id="quitDays" value="30">
-      </label>
-      <label class="inputs-label"><i class="fa-solid fa-money-bill-wave"></i> ثمن العلبة:
-        <input type="number" id="cigPrice" value="300">
-      </label>
-      <label class="inputs-label"><i class="fa-solid fa-box"></i> عدد السجائر/علبة:
-        <input type="number" id="cigsPerPack" value="20">
-      </label>
-      <label class="inputs-label"><i class="fa-solid fa-smoking"></i> معدل التدخين اليومي:
-        <input type="number" id="currentCigs" value="10">
-      </label>
-      <label class="inputs-label"><i class="fa-solid fa-hourglass-start"></i> سنوات التدخين:
-        <input type="number" id="smokeYears" value="5">
-      </label>
-      <button onclick="generateQuitPlan()"><i class="fa-solid fa-person-running"></i> ابدأ الخطة</button>
-      <div class="motivation" id="motivationalQuote"></div>
-      <div class="alert" id="warningMsg"></div>
+    <section id="smoking" class="section">
+      <h2>قسم التدخين</h2>
+      <label>عدد الأيام: <input type="number" id="quitDays" value="30"></label>
+      <label>ثمن العلبة: <input type="number" id="cigPrice" value="300"></label>
+      <label>عدد السجائر/علبة: <input type="number" id="cigsPerPack" value="20"></label>
+      <label>معدل التدخين اليومي: <input type="number" id="currentCigs" value="10"></label>
+      <label>سنوات التدخين: <input type="number" id="smokeYears" value="5"></label>
+      <button onclick="generateQuitPlan()">ابدأ</button>
       <div id="quitResults"></div>
+      <div id="motivationalQuote"></div>
       <table id="quitTable"></table>
       <canvas id="smokeChart"></canvas>
     </section>
   </main>
   <script>
-    // المال
     let target = parseInt(localStorage.getItem('target')) || 50000;
     document.getElementById('targetInput').value = target;
-    document.getElementById('sidebarTarget').value = target;
     const container = document.getElementById('inputsContainer');
-    container.innerHTML = '';
     for (let i = 1; i <= 30; i++) {
       const input = document.createElement('input');
       input.type = 'number';
-      input.placeholder = i;
+      input.placeholder = 'يوم ' + i;
       input.value = localStorage.getItem('day' + i) || '';
       input.oninput = () => localStorage.setItem('day' + i, input.value);
       input.className = 'day';
@@ -372,94 +137,94 @@
       const remaining = Math.max(0, target - total);
       const dailyNeeded = count < 30 ? Math.ceil(remaining / (30 - count)) : 0;
       const avg = count > 0 ? Math.round(total / count) : 0;
-      const percent = Math.min(100, Math.round((total / target) * 100));
+      const ctx = document.getElementById('moneyChart').getContext('2d');
+      if (window.moneyChart) window.moneyChart.destroy();
+      window.moneyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Array.from({length: 30}, (_, i) => `يوم ${i+1}`),
+          datasets: [{
+            label: 'الدخل اليومي',
+            data: values,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
       document.getElementById('collected').innerText = total;
       document.getElementById('remaining').innerText = remaining;
       document.getElementById('dailyNeeded').innerText = dailyNeeded;
       document.getElementById('avgPerDay').innerText = avg;
       document.getElementById('maxDay').innerText = max > 0 ? max : 0;
       document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
-      document.getElementById('progressBar').style.width = percent + '%';
-      document.getElementById('progressBar').innerText = percent + '%';
-      updateChart(values);
     }
     function updateTarget() {
       target = parseInt(document.getElementById('targetInput').value);
       localStorage.setItem('target', target);
-      document.getElementById('sidebarTarget').value = target;
-      calculate();
     }
-    function updateTargetFromSidebar() {
-      const newTarget = parseInt(document.getElementById('sidebarTarget').value);
-      document.getElementById('targetInput').value = newTarget;
-      updateTarget();
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
-    function resetData() {
-      if (confirm("إعادة تعيين كل البيانات؟")) {
-        for (let i = 1; i <= 30; i++) localStorage.removeItem('day' + i);
-        localStorage.removeItem('target');
-        location.reload();
-      }
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
     }
-    let chart;
-    function updateChart(data) {
-      const ctx = document.getElementById('progressChart').getContext('2d');
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Array.from({ length: 30 }, (_, i) => `يوم ${i + 1}`),
-          datasets: [{
-            label: 'الدخل اليومي',
-            data: data,
-            backgroundColor: 'rgba(67, 206, 162, 0.6)',
-            borderRadius: 7
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: { y: { beginAtZero: true, ticks: { color: '#185a9d' } }, x: { ticks: { color: '#185a9d' } } }
-        }
-      });
+    let bgToggle = false;
+    function toggleBackground() {
+      bgToggle = !bgToggle;
+      document.body.style.background = bgToggle ?
+        'linear-gradient(0deg, white, darkred, white)' :
+        'linear-gradient(120deg, #f6d365, #fda085)';
     }
-    // التدخ totalCigs = daily * days;
+    function generateQuitPlan() {
+      const days = parseInt(document.getElementById('quitDays').value);
+      const price = parseFloat(document.getElementById('cigPrice').value);
+      const perPack = parseInt(document.getElementById('cigsPerPack').value);
+      const daily = parseInt(document.getElementById('currentCigs').value);
+      const years = parseInt(document.getElementById('smokeYears').value);
+      const totalCigs = daily * days;
       const totalNic = totalCigs;
       const cost = Math.ceil((totalCigs / perPack) * price);
-      let result = `<p><i class="fa-solid fa-wind"></i> نيكوتين محتمل: ${totalNic} ملغ</p>
-                    <p><-up"></i> التوفير: ${cost} دج</p>`;
-      document.getElementById('quitResults').innerHTML = result;
-      let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
-      let data = [];
-      for (let i = 1; i <= days; i++) {
-        let allowed = Math.round(daily * (1 - (i / days)));
-        if (allowed <  كل يوم بدون تدخين هو نصر صغير!',
+      document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalNic} ملغ<br>💸 التوفير: ${cost} دج`;
+      const quotes = [
+        '💪 كل يوم بدون تدخين هو نصر صغير!',
         '🚀 أنت أقوى من العادة!',
         '🌿 صحتك أولى بالتغيير.',
         '⏳ الدقائق الخالية من التدخين تضيف سنوات لحياتك.'
       ];
-      document.getElementById('motivationalQuote').innerText =
-        quotes[Math.floor(Math.random() * quotes.length)];
-      updateSmokeChart(data);
- parseInt(document.getElementDay).      =Bywarning if >       Text️dayتوح}) else msg '';
- }
-Smoke {
- document('Chart').2 ()();
- new {
-line: data iوم  datasets:وح data           rgba  .            border:24,.           ,
-:2 }]
-                 true          plugins: {
-            legend: { display: false }
-          },
-          scales: { y: { beginAtZero: true: '#9 { ticks: { color: '#185a9d' } } }
+      document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+      let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
+      let chartData = [];
+      for (let i = 1; i <= days; i++) {
+        let allowed = Math.round(daily * (1 - (i / days)));
+        chartData.push(allowed);
+        table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number'></td></tr>`;
+      }
+      document.getElementById('quitTable').innerHTML = table;
+      const ctx = document.getElementById('smokeChart').getContext('2d');
+      if (window.smokeChart) window.smokeChart.destroy();
+      window.smokeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({length: days}, (_, i) => `يوم ${i+1}`),
+          datasets: [{
+            label: 'السجائر المسموح بها',
+            data: chartData,
+            fill: false,
+            borderColor: 'rgba(220,53,69,1)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
         }
       });
     }
-    // واجهة
-    function toggleBackground() {
-      if(document.body.style.background.includes('185a9d'))
-        document.body.style.background = "linear-gradient(120deg, #f6d365 0%, #fda085 100%)";
-      else
-        document.body.style.background = "linear-gradient(120deg, #43cea2 0%, #185a91
+    window.onload = calculate;
+  </script>
+</body>
+</html>
