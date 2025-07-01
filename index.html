@@ -19,6 +19,8 @@
       padding: 0;
       background-color: white;
       color: var(--text-color);
+    }
+    body.animated {
       animation: backgroundTransition 10s infinite;
     }
     @keyframes backgroundTransition {
@@ -118,9 +120,22 @@
       padding: 8px;
       font-size: 14px;
     }
+    #toggleBg {
+      position: fixed;
+      left: 10px;
+      top: 10px;
+      background: #000;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 9999;
+    }
   </style>
 </head>
 <body>
+  <button id="toggleBg" onclick="toggleBackground()">🎨 تغيير الخلفية</button>
   <header>📊 تطبيق تتبع الأهداف - مال وصحة</header>
   <nav>
     <button onclick="showSection('money')">💰 المال</button>
@@ -174,32 +189,9 @@
 
   </main>
   <script>
-    function downloadMoneyPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text("تقرير تتبع جمع المال", 10, 10);
-      let y = 20;
-      for (let i = 1; i <= 30; i++) {
-        const val = localStorage.getItem('money_day' + i) || '0';
-        doc.text(`يوم ${i}: ${val} دج`, 10, y);
-        y += 7;
-      }
-      const target = localStorage.getItem('money_target') || '50000';
-      doc.text(`الهدف: ${target} دج`, 10, y + 5);
-      doc.save("money_report.pdf");
-    }function downloadSmokePDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.text("تقرير خطة الإقلاع عن التدخين", 10, 10);
-  let y = 20;
-  for (let i = 1; i <= 30; i++) {
-    const val = localStorage.getItem('smoke_day' + i) || '-';
-    doc.text(`يوم ${i}: ${val} سيجارة`, 10, y);
-    y += 7;
-  }
-  doc.save("smoking_report.pdf");
-}
-
+    function toggleBackground() {
+      document.body.classList.toggle("animated");
+    }
   </script>
 </body>
 </html>
