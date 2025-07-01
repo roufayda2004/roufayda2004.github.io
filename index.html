@@ -221,7 +221,143 @@
 
   </main>
   <script>
-    // سيتم الآن إدراج كل الدوال المطلوبة تلقائياً هنا
+    let target = parseInt(localStorage.getItem('target')) || 50000;
+    document.getElementById('targetInput').value = target;
+    document.getElementById('sidebarTarget').value = target;
+    const container = document.getElementById('inputsContainer');
+    for (let i = 1; i <= 30; i++) {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.placeholder = i;
+      input.value = localStorage.getItem('day' + i) || '';
+      input.oninput = () => localStorage.setItem('day' + i, input.value);
+      input.className = 'day';
+      container.appendChild(input);
+    }
+    function calculate() {
+      let total = 0, count = 0, min = Infinity, max = -Infinity;
+      let values = [];
+      document.querySelectorAll('.day').forEach((el, i) => {
+        const val = parseFloat(el.value);
+        if (!isNaN(val)) {
+          total += val;
+          count++;
+          if (val > max) max = val;
+          if (val < min && val > 0) min = val;
+        }
+        values[i] = isNaN(val) ? 0 : val;
+      });
+      const remaining = Math.max(0, target - total);
+      const dailyNeeded = count < 30 ? Math.ceil(remaining / (30 - count)) : 0;
+      const avg = count > 0 ? Math.round(total / count) : 0;
+      const percent = Math.min(100, Math.round((total / target) * 100));
+      document.getElementById('collected').innerText = total;
+      document.getElementById('remaining').innerText = remaining;
+      document.getElementById('dailyNeeded').innerText = dailyNeeded;
+      document.getElementById('avgPerDay').innerText = avg;
+      document.getElementById('maxDay').innerText = max > 0 ? max : 0;
+      document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressBar').innerText = percent + '%';
+      updateChart(values);
+    }
+    function updateTarget() {
+      target = parseInt(document.getElementById('targetInput').value);
+      localStorage.setItem('target', target);
+      calculate();
+    }
+    function updateTargetFromSidebar() {
+      const newTarget = parseInt(document.getElementById('sidebarTarget').value);
+      document.getElementById('targetInput').value = newTarget;
+      updateTarget();
+    }
+    function resetData() {
+      if (confirm("إعادة تعيين كل البيانات؟")) {
+        for (let i = 1; i <= 30; i++) localStorage.removeItem('day' + i);
+        localStorage.removeItem('target');
+        location.reload();
+      }
+    }
+    let chart;
+    function updateChart(data) {
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Array.from({ length: 30 }, (_, i) => `يوم ${i + 1}`),
+          datasets: [{ label: 'الدخل اليومي', data: data, backgroundColor: 'rgba(54, 162, 235, 0.6)' }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+    let smokeChart;
+    function generateQuitPlan() {
+      const days = parseInt(document.getElementById('quitDays').value);
+      const price = parseFloat(document.getElementById('cigPrice').value);
+      const perPack = parseInt(document.getElementById('cigsPerPack').value);
+      const daily = parseInt(document.getElementById('currentCigs').value);
+      const years = parseInt(document.getElementById('smokeYears').value);
+      const totalCigs = daily * days;
+      const totalNic = totalCigs;
+      const cost = Math.ceil((totalCigs / perPack) * price);
+      let result = `<p>💨 نيكوتين محتمل: ${totalNic} ملغ</p><p>💸 التوفير: ${cost} دج</p>`;
+      document.getElementById('quitResults').innerHTML = result;
+      let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
+      let data = [];
+      for (let i = 1; i <= days; i++) {
+        let allowed = Math.round(daily * (1 - (i / days)));
+        table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number' id='smokedDay${i}' oninput='checkLimit(${i}, ${allowed})'></td></tr>`;
+        data.push(allowed);
+      }
+      document.getElementById('quitTable').innerHTML = table;
+      const quotes = [
+        '💪 كل يوم بدون تدخين هو نصر صغير!',
+        '🚀 أنت أقوى من العادة!',
+        '🌿 صحتك أولى بالتغيير.',
+        '⏳ الدقائق الخالية من التدخين تضيف سنوات لحياتك.'
+      ];
+      document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+      updateSmokeChart(data);
+    }
+    function checkLimit(day, allowed) {
+      const val = parseInt(document.getElementById('smokedDay' + day).value);
+      const msg = document.getElementById('warningMsg');
+      if (val > allowed) {
+        msg.innerText = `⚠️ اليوم ${day}: تجاوزت الحد المسموح (${allowed})`;
+      } else {
+        msg.innerText = '';
+      }
+    }
+    function updateSmokeChart(data) {
+      const ctx = document.getElementById('smokeChart').getContext('2d');
+      if (smokeChart) smokeChart.destroy();
+      smokeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map((_, i) => `يوم ${i + 1}`),
+          datasets: [{
+            label: 'المسموح يومياً',
+            data: data,
+            backgroundColor: 'rgba(76, 175, 80, 0.3)',
+            borderColor: 'rgba(76, 175, 80, 1)',
+            fill: true
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+    function toggleBackground() {
+      document.body.classList.toggle('animated');
+    }
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    window.addEventListener('load', calculate);
   </script>
 </body>
 </html>
