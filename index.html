@@ -11,7 +11,7 @@
       font-family: 'Cairo', sans-serif;
       direction: rtl;
       margin: 0;
-      background: linear-gradient(120deg, #f6d365, #fda085);
+      background: white;
       transition: background 2s ease-in-out;
     }
     #toggleBg, #toggleSidebar {
@@ -53,38 +53,24 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .section { display: none; }
+    .section {
+      display: none;
+    }
     .section.active {
       display: block;
       padding: 20px;
       background: #fff;
-      margin: 20px;
+      margin: 20px 10px;
       border-radius: 10px;
     }
-    #inputsContainer {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-      gap: 5px;
-      margin: 15px 0;
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
     }
-    #inputsContainer input {
-      padding: 5px;
-      text-align: center;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    canvas { max-width: 100%; margin-top: 20px; }
     @media (max-width: 600px) {
-      .section {
-        margin: 10px;
-        padding: 10px;
-      }
-      #sidebar {
-        width: 180px;
-      }
-      #toggleBg, #toggleSidebar {
-        padding: 8px;
-        font-size: 14px;
+      .section.active {
+        margin: 10px 5px;
+        padding: 15px 10px;
       }
     }
   </style>
@@ -132,119 +118,127 @@
     for (let i = 1; i <= 30; i++) {
       const input = document.createElement('input');
       input.type = 'number';
-      input.placeholder = 'يوم ' + i;
+      input.placeholder = 'اليوم ' + i;
       input.value = localStorage.getItem('day' + i) || '';
       input.oninput = () => localStorage.setItem('day' + i, input.value);
       input.className = 'day';
       container.appendChild(input);
+    }function calculate() {
+  let total = 0, count = 0, min = Infinity, max = -Infinity;
+  let values = [];
+  document.querySelectorAll('.day').forEach((el, i) => {
+    const val = parseFloat(el.value);
+    if (!isNaN(val)) {
+      total += val;
+      count++;
+      if (val > max) max = val;
+      if (val < min && val > 0) min = val;
     }
-    function calculate() {
-      let total = 0, count = 0, min = Infinity, max = -Infinity;
-      let values = [];
-      document.querySelectorAll('.day').forEach((el, i) => {
-        const val = parseFloat(el.value);
-        if (!isNaN(val)) {
-          total += val;
-          count++;
-          if (val > max) max = val;
-          if (val < min && val > 0) min = val;
-        }
-        values[i] = isNaN(val) ? 0 : val;
-      });
-      const remaining = Math.max(0, target - total);
-      const dailyNeeded = count < 30 ? Math.ceil(remaining / (30 - count)) : 0;
-      const avg = count > 0 ? Math.round(total / count) : 0;
-      const ctx = document.getElementById('moneyChart').getContext('2d');
-      if (window.moneyChart) window.moneyChart.destroy();
-      window.moneyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Array.from({length: 30}, (_, i) => `يوم ${i+1}`),
-          datasets: [{
-            label: 'الدخل اليومي',
-            data: values,
-            backgroundColor: 'rgba(75, 192, 192, 0.5)'
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-      document.getElementById('collected').innerText = total;
-      document.getElementById('remaining').innerText = remaining;
-      document.getElementById('dailyNeeded').innerText = dailyNeeded;
-      document.getElementById('avgPerDay').innerText = avg;
-      document.getElementById('maxDay').innerText = max > 0 ? max : 0;
-      document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
+    values[i] = isNaN(val) ? 0 : val;
+  });
+  const remaining = Math.max(0, target - total);
+  const dailyNeeded = count < 30 ? Math.ceil(remaining / (30 - count)) : 0;
+  const avg = count > 0 ? Math.round(total / count) : 0;
+  const ctx = document.getElementById('moneyChart').getContext('2d');
+  if (window.moneyChart) window.moneyChart.destroy();
+  window.moneyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Array.from({length: 30}, (_, i) => `يوم ${i+1}`),
+      datasets: [{
+        label: 'الدخل اليومي',
+        data: values,
+        backgroundColor: 'rgba(75, 192, 192, 0.5)'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
     }
-    function updateTarget() {
-      target = parseInt(document.getElementById('targetInput').value);
-      localStorage.setItem('target', target);
+  });
+  document.getElementById('collected').innerText = total;
+  document.getElementById('remaining').innerText = remaining;
+  document.getElementById('dailyNeeded').innerText = dailyNeeded;
+  document.getElementById('avgPerDay').innerText = avg;
+  document.getElementById('maxDay').innerText = max > 0 ? max : 0;
+  document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
+}
+
+function updateTarget() {
+  target = parseInt(document.getElementById('targetInput').value);
+  localStorage.setItem('target', target);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+}
+
+let bgState = 0;
+function toggleBackground() {
+  const states = [
+    'linear-gradient(0deg, white, darkred, white)',
+    'linear-gradient(120deg, #f6d365, #fda085)',
+    'white'
+  ];
+  bgState = (bgState + 1) % states.length;
+  document.body.style.background = states[bgState];
+}
+
+function generateQuitPlan() {
+  const days = parseInt(document.getElementById('quitDays').value);
+  const price = parseFloat(document.getElementById('cigPrice').value);
+  const perPack = parseInt(document.getElementById('cigsPerPack').value);
+  const daily = parseInt(document.getElementById('currentCigs').value);
+  const years = parseInt(document.getElementById('smokeYears').value);
+  const totalCigs = daily * days;
+  const totalNic = totalCigs;
+  const cost = Math.ceil((totalCigs / perPack) * price);
+  document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalNic} ملغ<br>💸 التوفير: ${cost} دج`;
+  const quotes = [
+    '💪 كل يوم بدون تدخين هو نصر صغير!',
+    '🚀 أنت أقوى من العادة!',
+    '🌿 صحتك أولى بالتغيير.',
+    '⏳ الدقائق الخالية من التدخين تضيف سنوات لحياتك.'
+  ];
+  document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+  let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
+  let chartData = [];
+  for (let i = 1; i <= days; i++) {
+    let allowed = Math.round(daily * (1 - (i / days)));
+    chartData.push(allowed);
+    table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number'></td></tr>`;
+  }
+  document.getElementById('quitTable').innerHTML = table;
+  const ctx = document.getElementById('smokeChart').getContext('2d');
+  if (window.smokeChart) window.smokeChart.destroy();
+  window.smokeChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from({length: days}, (_, i) => `يوم ${i+1}`),
+      datasets: [{
+        label: 'السجائر المسموح بها',
+        data: chartData,
+        fill: false,
+        borderColor: 'rgba(220,53,69,1)',
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
     }
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      document.getElementById('sidebar').classList.remove('active');
-    }
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-    }
-    let bgState = 0;
-    function toggleBackground() {
-      bgState++;
-      if (bgState % 2 === 1) {
-        document.body.style.background = "linear-gradient(0deg, white, darkred, white)";
-      } else {
-        document.body.style.background = "linear-gradient(120deg, #f6d365, #fda085)";
-      }
-    }
-    function generateQuitPlan() {
-      const days = parseInt(document.getElementById('quitDays').value);
-      const price = parseFloat(document.getElementById('cigPrice').value);
-      const perPack = parseInt(document.getElementById('cigsPerPack').value);
-      const daily = parseInt(document.getElementById('currentCigs').value);
-      const years = parseInt(document.getElementById('smokeYears').value);
-      const totalCigs = daily * days;
-      const totalNic = totalCigs;
-      const cost = Math.ceil((totalCigs / perPack) * price);
-      document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalNic} ملغ<br>💸 التوفير: ${cost} دج`;
-      const quotes = [
-        '💪 كل يوم بدون تدخين هو نصر صغير!',
-        '🚀 أنت أقوى من العادة!',
-        '🌿 صحتك أولى بالتغيير.',
-        '⏳ الدقائق الخالية من التدخين تضيف سنوات لحياتك.'
-      ];
-      document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
-      let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
-      let chartData = [];
-      for (let i = 1; i <= days; i++) {
-        let allowed = Math.round(daily * (1 - (i / days)));
-        chartData.push(allowed);
-        table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number'></td></tr>`;
-      }
-      document.getElementById('quitTable').innerHTML = table;
-      const ctx = document.getElementById('smokeChart').getContext('2d');
-      if (window.smokeChart) window.smokeChart.destroy();
-      window.smokeChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: Array.from({length: days}, (_, i) => `يوم ${i+1}`),
-          datasets: [{
-            label: 'السجائر المسموح بها',
-            data: chartData,
-            fill: false,
-            borderColor: 'rgba(220,53,69,1)',
-            tension: 0.1
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-    }
-    window.onload = calculate;
+  });
+}
+
+window.onload = () => {
+  calculate();
+}
+
   </script>
 </body>
 </html>
