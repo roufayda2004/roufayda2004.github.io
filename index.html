@@ -54,21 +54,38 @@
       cursor: pointer;
     }
     .section { display: none; }
-    .section.active { display: block; padding: 20px; background: #fff; margin: 20px; border-radius: 10px; }
-    canvas { max-width: 100%; margin-top: 20px; }
-    .day-inputs {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
-      gap: 8px;
-      margin: 10px 0;
+    .section.active {
+      display: block;
+      padding: 20px;
+      background: #fff;
+      margin: 20px;
+      border-radius: 10px;
     }
-    .day-inputs input {
+    #inputsContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+      gap: 5px;
+      margin: 15px 0;
+    }
+    #inputsContainer input {
+      padding: 5px;
       text-align: center;
-      padding: 7px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-size: 16px;
-      background: #f6f9fa;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    canvas { max-width: 100%; margin-top: 20px; }
+    @media (max-width: 600px) {
+      .section {
+        margin: 10px;
+        padding: 10px;
+      }
+      #sidebar {
+        width: 180px;
+      }
+      #toggleBg, #toggleSidebar {
+        padding: 8px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -84,7 +101,7 @@
     <section id="money" class="section active">
       <h2>قسم المال</h2>
       <input type="number" id="targetInput" value="50000" onchange="updateTarget()">
-      <div id="inputsContainer" class="day-inputs"></div>
+      <div id="inputsContainer"></div>
       <p>المجموع: <span id="collected">0</span></p>
       <p>المتبقي: <span id="remaining">0</span></p>
       <p>المطلوب/يوم: <span id="dailyNeeded">0</span></p>
@@ -168,16 +185,19 @@
     function showSection(id) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+      document.getElementById('sidebar').classList.remove('active');
     }
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
-    let bgToggle = false;
+    let bgState = 0;
     function toggleBackground() {
-      bgToggle = !bgToggle;
-      document.body.style.background = bgToggle ?
-        'linear-gradient(0deg, white, darkred, white)' :
-        'linear-gradient(120deg, #f6d365, #fda085)';
+      bgState++;
+      if (bgState % 2 === 1) {
+        document.body.style.background = "linear-gradient(0deg, white, darkred, white)";
+      } else {
+        document.body.style.background = "linear-gradient(120deg, #f6d365, #fda085)";
+      }
     }
     function generateQuitPlan() {
       const days = parseInt(document.getElementById('quitDays').value);
