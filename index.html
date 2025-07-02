@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>متابعة الأهداف - مال وصحة</title>
+  <title>تطبيق تتبع الأهداف - مال وصحة</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,22 +14,15 @@
       background: linear-gradient(120deg, #f6d365, #fda085);
       transition: background 2s ease-in-out;
     }
-    header {
-      background-color: #fff;
-      text-align: center;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
     #toggleBg, #toggleSidebar {
       position: fixed;
-      padding: 8px;
+      padding: 10px;
       background-color: #333;
       color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       z-index: 1000;
-      font-size: 14px;
     }
     #toggleBg { top: 10px; left: 10px; }
     #toggleSidebar { top: 10px; right: 10px; }
@@ -37,16 +30,18 @@
       position: fixed;
       top: 0;
       right: -250px;
-      width: 220px;
+      width: 250px;
       height: 100%;
       background: linear-gradient(120deg, #43cea2, #185a9d);
-      color: #fff;
-      padding: 15px;
+      color: white;
+      padding: 20px;
       box-shadow: -2px 0 10px rgba(0,0,0,0.3);
-      transition: right 0.3s;
+      transition: right 0.4s ease;
       z-index: 999;
     }
-    #sidebar.active { right: 0; }
+    #sidebar.active {
+      right: 0;
+    }
     #sidebar button {
       background: #fff;
       color: #185a9d;
@@ -58,45 +53,32 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .section { display: none; }
+    .section {
+      display: none;
+    }
     .section.active {
       display: block;
       padding: 20px;
       background: #fff;
       margin: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    canvas { max-width: 100%; margin-top: 20px; }
-    #inputsContainer {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 8px;
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
     }
-    @media (max-width: 600px) {
-      .section { margin: 10px; padding: 12px; }
-      header h1 { font-size: 20px; padding: 10px; }
-      #inputsContainer { grid-template-columns: 1fr; }
-    }
-    table {
+    input {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-    th {
-      background-color: #43cea2;
-      color: #fff;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
-  <button id="toggleBg">🎨 الخلفية</button>
-  <button id="toggleSidebar">📋 القائمة</button>
+  <button id="toggleBg" onclick="toggleBackground()">🎨 الخلفية</button>
+  <button id="toggleSidebar" onclick="toggleSidebar()">📋 القائمة</button>
   <div id="sidebar">
     <button onclick="showSection('money')">💰 المال</button>
     <button onclick="showSection('smoking')">🚭 التدخين</button>
@@ -218,7 +200,7 @@
       let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
       let chartData = [];
       for (let i = 1; i <= days; i++) {
-        let allowed = Math.max(0, Math.round(daily * (1 - (i / days))));
+        let allowed = Math.round(daily * (1 - (i / days)));
         chartData.push(allowed);
         table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number'></td></tr>`;
       }
@@ -237,10 +219,7 @@
             tension: 0.1
           }]
         },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } }
-        }
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
       });
     }
     window.onload = calculate;
