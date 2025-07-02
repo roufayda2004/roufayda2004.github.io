@@ -11,37 +11,42 @@
       font-family: 'Cairo', sans-serif;
       direction: rtl;
       margin: 0;
-      background: white;
+      background: linear-gradient(120deg, #f6d365, #fda085);
       transition: background 2s ease-in-out;
+    }
+    header {
+      background-color: #fff;
+      text-align: center;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     #toggleBg, #toggleSidebar {
       position: fixed;
-      padding: 10px;
+      padding: 8px;
       background-color: #333;
       color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       z-index: 1000;
+      font-size: 14px;
     }
     #toggleBg { top: 10px; left: 10px; }
     #toggleSidebar { top: 10px; right: 10px; }
     #sidebar {
       position: fixed;
       top: 0;
-      right: -200px;
-      width: 200px;
+      right: -250px;
+      width: 220px;
       height: 100%;
       background: linear-gradient(120deg, #43cea2, #185a9d);
       color: #fff;
-      padding: 10px;
+      padding: 15px;
       box-shadow: -2px 0 10px rgba(0,0,0,0.3);
       transition: right 0.3s;
       z-index: 999;
     }
-    #sidebar.active {
-      right: 0;
-    }
+    #sidebar.active { right: 0; }
     #sidebar button {
       background: #fff;
       color: #185a9d;
@@ -53,25 +58,39 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .section {
-      display: none;
-    }
+    .section { display: none; }
     .section.active {
       display: block;
       padding: 20px;
       background: #fff;
-      margin: 20px 10px;
+      margin: 20px;
       border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    canvas {
-      max-width: 100%;
-      margin-top: 20px;
+    canvas { max-width: 100%; margin-top: 20px; }
+    #inputsContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
     }
     @media (max-width: 600px) {
-      .section.active {
-        margin: 10px 5px;
-        padding: 15px 10px;
-      }
+      .section { margin: 10px; padding: 12px; }
+      header h1 { font-size: 20px; padding: 10px; }
+      #inputsContainer { grid-template-columns: 1fr; }
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #43cea2;
+      color: #fff;
     }
   </style>
 </head>
@@ -96,20 +115,20 @@
       <p>المتوسط: <span id="avgPerDay">0</span></p>
       <button onclick="calculate()">حساب</button>
       <canvas id="moneyChart"></canvas>
-    </section>
-    <section id="smoking" class="section">
-      <h2>قسم التدخين</h2>
-      <label>عدد الأيام: <input type="number" id="quitDays" value="30"></label>
-      <label>ثمن العلبة: <input type="number" id="cigPrice" value="300"></label>
-      <label>عدد السجائر/علبة: <input type="number" id="cigsPerPack" value="20"></label>
-      <label>معدل التدخين اليومي: <input type="number" id="currentCigs" value="10"></label>
-      <label>سنوات التدخين: <input type="number" id="smokeYears" value="5"></label>
-      <button onclick="generateQuitPlan()">ابدأ</button>
-      <div id="quitResults"></div>
-      <div id="motivationalQuote"></div>
-      <table id="quitTable"></table>
-      <canvas id="smokeChart"></canvas>
-    </section>
+    </section><section id="smoking" class="section">
+  <h2>قسم التدخين</h2>
+  <label>عدد الأيام: <input type="number" id="quitDays" value="30"></label>
+  <label>ثمن العلبة: <input type="number" id="cigPrice" value="300"></label>
+  <label>عدد السجائر/علبة: <input type="number" id="cigsPerPack" value="20"></label>
+  <label>معدل التدخين اليومي: <input type="number" id="currentCigs" value="10"></label>
+  <label>سنوات التدخين: <input type="number" id="smokeYears" value="5"></label>
+  <button onclick="generateQuitPlan()">ابدأ</button>
+  <div id="quitResults"></div>
+  <div id="motivationalQuote"></div>
+  <table id="quitTable"></table>
+  <canvas id="smokeChart"></canvas>
+</section>
+
   </main>
   <script>
     let target = parseInt(localStorage.getItem('target')) || 50000;
@@ -123,122 +142,108 @@
       input.oninput = () => localStorage.setItem('day' + i, input.value);
       input.className = 'day';
       container.appendChild(input);
-    }function calculate() {
-  let total = 0, count = 0, min = Infinity, max = -Infinity;
-  let values = [];
-  document.querySelectorAll('.day').forEach((el, i) => {
-    const val = parseFloat(el.value);
-    if (!isNaN(val)) {
-      total += val;
-      count++;
-      if (val > max) max = val;
-      if (val < min && val > 0) min = val;
     }
-    values[i] = isNaN(val) ? 0 : val;
-  });
-  const remaining = Math.max(0, target - total);
-  const dailyNeeded = count < 30 ? Math.ceil(remaining / (30 - count)) : 0;
-  const avg = count > 0 ? Math.round(total / count) : 0;
-  const ctx = document.getElementById('moneyChart').getContext('2d');
-  if (window.moneyChart) window.moneyChart.destroy();
-  window.moneyChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: Array.from({length: 30}, (_, i) => `يوم ${i+1}`),
-      datasets: [{
-        label: 'الدخل اليومي',
-        data: values,
-        backgroundColor: 'rgba(75, 192, 192, 0.5)'
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } }
+    function calculate() {
+      let total = 0, count = 0, min = Infinity, max = -Infinity;
+      let values = [];
+      document.querySelectorAll('.day').forEach((el, i) => {
+        const val = parseFloat(el.value);
+        if (!isNaN(val)) {
+          total += val;
+          count++;
+          if (val > max) max = val;
+          if (val < min && val > 0) min = val;
+        }
+        values[i] = isNaN(val) ? 0 : val;
+      });
+      const remaining = Math.max(0, target - total);
+      const dailyNeeded = count < 30 ? Math.ceil(remaining / (30 - count)) : 0;
+      const avg = count > 0 ? Math.round(total / count) : 0;
+      const ctx = document.getElementById('moneyChart').getContext('2d');
+      if (window.moneyChart) window.moneyChart.destroy();
+      window.moneyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Array.from({length: 30}, (_, i) => `يوم ${i+1}`),
+          datasets: [{
+            label: 'الدخل اليومي',
+            data: values,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+      document.getElementById('collected').innerText = total;
+      document.getElementById('remaining').innerText = remaining;
+      document.getElementById('dailyNeeded').innerText = dailyNeeded;
+      document.getElementById('avgPerDay').innerText = avg;
+      document.getElementById('maxDay').innerText = max > 0 ? max : 0;
+      document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
     }
-  });
-  document.getElementById('collected').innerText = total;
-  document.getElementById('remaining').innerText = remaining;
-  document.getElementById('dailyNeeded').innerText = dailyNeeded;
-  document.getElementById('avgPerDay').innerText = avg;
-  document.getElementById('maxDay').innerText = max > 0 ? max : 0;
-  document.getElementById('minDay').innerText = min !== Infinity ? min : 0;
-}
-
-function updateTarget() {
-  target = parseInt(document.getElementById('targetInput').value);
-  localStorage.setItem('target', target);
-}
-
-function showSection(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-}
-
-let bgState = 0;
-function toggleBackground() {
-  const states = [
-    'linear-gradient(0deg, white, darkred, white)',
-    'linear-gradient(120deg, #f6d365, #fda085)',
-    'white'
-  ];
-  bgState = (bgState + 1) % states.length;
-  document.body.style.background = states[bgState];
-}
-
-function generateQuitPlan() {
-  const days = parseInt(document.getElementById('quitDays').value);
-  const price = parseFloat(document.getElementById('cigPrice').value);
-  const perPack = parseInt(document.getElementById('cigsPerPack').value);
-  const daily = parseInt(document.getElementById('currentCigs').value);
-  const years = parseInt(document.getElementById('smokeYears').value);
-  const totalCigs = daily * days;
-  const totalNic = totalCigs;
-  const cost = Math.ceil((totalCigs / perPack) * price);
-  document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalNic} ملغ<br>💸 التوفير: ${cost} دج`;
-  const quotes = [
-    '💪 كل يوم بدون تدخين هو نصر صغير!',
-    '🚀 أنت أقوى من العادة!',
-    '🌿 صحتك أولى بالتغيير.',
-    '⏳ الدقائق الخالية من التدخين تضيف سنوات لحياتك.'
-  ];
-  document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
-  let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
-  let chartData = [];
-  for (let i = 1; i <= days; i++) {
-    let allowed = Math.round(daily * (1 - (i / days)));
-    chartData.push(allowed);
-    table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number'></td></tr>`;
-  }
-  document.getElementById('quitTable').innerHTML = table;
-  const ctx = document.getElementById('smokeChart').getContext('2d');
-  if (window.smokeChart) window.smokeChart.destroy();
-  window.smokeChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: Array.from({length: days}, (_, i) => `يوم ${i+1}`),
-      datasets: [{
-        label: 'السجائر المسموح بها',
-        data: chartData,
-        fill: false,
-        borderColor: 'rgba(220,53,69,1)',
-        tension: 0.1
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } }
+    function updateTarget() {
+      target = parseInt(document.getElementById('targetInput').value);
+      localStorage.setItem('target', target);
     }
-  });
-}
-
-window.onload = () => {
-  calculate();
-}
-
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    let bgToggle = false;
+    function toggleBackground() {
+      bgToggle = !bgToggle;
+      document.body.style.background = bgToggle ?
+        'linear-gradient(0deg, white, darkred, white)' :
+        'linear-gradient(120deg, #f6d365, #fda085)';
+    }
+    function generateQuitPlan() {
+      const days = parseInt(document.getElementById('quitDays').value);
+      const price = parseFloat(document.getElementById('cigPrice').value);
+      const perPack = parseInt(document.getElementById('cigsPerPack').value);
+      const daily = parseInt(document.getElementById('currentCigs').value);
+      const years = parseInt(document.getElementById('smokeYears').value);
+      const totalCigs = daily * days;
+      const totalNic = totalCigs;
+      const cost = Math.ceil((totalCigs / perPack) * price);
+      document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalNic} ملغ<br>💸 التوفير: ${cost} دج`;
+      const quotes = [
+        '💪 كل يوم بدون تدخين هو نصر صغير!',
+        '🚀 أنت أقوى من العادة!',
+        '🌿 صحتك أولى بالتغيير.',
+        '⏳ الدقائق الخالية من التدخين تضيف سنوات لحياتك.'
+      ];
+      document.getElementById('motivationalQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+      let table = '<tr><th>اليوم</th><th>المسموح</th><th>المُسجل</th></tr>';
+      let chartData = [];
+      for (let i = 1; i <= days; i++) {
+        let allowed = Math.max(0, Math.round(daily * (1 - (i / days))));
+        chartData.push(allowed);
+        table += `<tr><td>${i}</td><td>${allowed}</td><td><input type='number'></td></tr>`;
+      }
+      document.getElementById('quitTable').innerHTML = table;
+      const ctx = document.getElementById('smokeChart').getContext('2d');
+      if (window.smokeChart) window.smokeChart.destroy();
+      window.smokeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({length: days}, (_, i) => `يوم ${i+1}`),
+          datasets: [{
+            label: 'السجائر المسموح بها',
+            data: chartData,
+            fill: false,
+            borderColor: 'rgba(220,53,69,1)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+    window.onload = calculate;
   </script>
 </body>
 </html>
