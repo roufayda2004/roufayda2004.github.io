@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تطبيق تتبع الأهداف - مال وصحة</title>
+  <title>متابعة الأهداف - مال وصحة</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,14 +29,14 @@
     #sidebar {
       position: fixed;
       top: 0;
-      right: -250px;
-      width: 250px;
+      right: -200px;
+      width: 200px;
       height: 100%;
       background: linear-gradient(120deg, #43cea2, #185a9d);
-      color: white;
-      padding: 20px;
+      color: #fff;
+      padding: 10px;
       box-shadow: -2px 0 10px rgba(0,0,0,0.3);
-      transition: right 0.4s ease;
+      transition: right 0.3s;
       z-index: 999;
     }
     #sidebar.active {
@@ -53,32 +53,25 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .section {
-      display: none;
-    }
-    .section.active {
-      display: block;
-      padding: 20px;
-      background: #fff;
-      margin: 20px;
-      border-radius: 10px;
-    }
-    canvas {
-      max-width: 100%;
-      margin-top: 20px;
-    }
-    input {
+    .section { display: none; }
+    .section.active { display: block; padding: 20px; background: #fff; margin: 20px; border-radius: 10px; }
+    canvas { max-width: 100%; margin-top: 20px; }
+    table {
       width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+    }
+    th { background-color: #eee; }
   </style>
 </head>
 <body>
-  <button id="toggleBg" onclick="toggleBackground()">🎨 الخلفية</button>
-  <button id="toggleSidebar" onclick="toggleSidebar()">📋 القائمة</button>
+  <button id="toggleBg">🎨 الخلفية</button>
+  <button id="toggleSidebar">📋 القائمة</button>
   <div id="sidebar">
     <button onclick="showSection('money')">💰 المال</button>
     <button onclick="showSection('smoking')">🚭 التدخين</button>
@@ -88,7 +81,10 @@
     <section id="money" class="section active">
       <h2>قسم المال</h2>
       <input type="number" id="targetInput" value="50000" onchange="updateTarget()">
-      <div id="inputsContainer"></div>
+      <table>
+        <thead><tr><th>اليوم</th><th>المبلغ</th></tr></thead>
+        <tbody id="inputsContainer"></tbody>
+      </table>
       <p>المجموع: <span id="collected">0</span></p>
       <p>المتبقي: <span id="remaining">0</span></p>
       <p>المطلوب/يوم: <span id="dailyNeeded">0</span></p>
@@ -97,33 +93,39 @@
       <p>المتوسط: <span id="avgPerDay">0</span></p>
       <button onclick="calculate()">حساب</button>
       <canvas id="moneyChart"></canvas>
-    </section><section id="smoking" class="section">
-  <h2>قسم التدخين</h2>
-  <label>عدد الأيام: <input type="number" id="quitDays" value="30"></label>
-  <label>ثمن العلبة: <input type="number" id="cigPrice" value="300"></label>
-  <label>عدد السجائر/علبة: <input type="number" id="cigsPerPack" value="20"></label>
-  <label>معدل التدخين اليومي: <input type="number" id="currentCigs" value="10"></label>
-  <label>سنوات التدخين: <input type="number" id="smokeYears" value="5"></label>
-  <button onclick="generateQuitPlan()">ابدأ</button>
-  <div id="quitResults"></div>
-  <div id="motivationalQuote"></div>
-  <table id="quitTable"></table>
-  <canvas id="smokeChart"></canvas>
-</section>
-
+    </section>
+    <section id="smoking" class="section">
+      <h2>قسم التدخين</h2>
+      <label>عدد الأيام: <input type="number" id="quitDays" value="30"></label>
+      <label>ثمن العلبة: <input type="number" id="cigPrice" value="300"></label>
+      <label>عدد السجائر/علبة: <input type="number" id="cigsPerPack" value="20"></label>
+      <label>معدل التدخين اليومي: <input type="number" id="currentCigs" value="10"></label>
+      <label>سنوات التدخين: <input type="number" id="smokeYears" value="5"></label>
+      <button onclick="generateQuitPlan()">ابدأ</button>
+      <div id="quitResults"></div>
+      <div id="motivationalQuote"></div>
+      <table id="quitTable"></table>
+      <canvas id="smokeChart"></canvas>
+    </section>
   </main>
   <script>
     let target = parseInt(localStorage.getItem('target')) || 50000;
     document.getElementById('targetInput').value = target;
     const container = document.getElementById('inputsContainer');
     for (let i = 1; i <= 30; i++) {
+      const tr = document.createElement('tr');
+      const tdLabel = document.createElement('td');
+      const tdInput = document.createElement('td');
+      tdLabel.textContent = `اليوم ${i}`;
       const input = document.createElement('input');
       input.type = 'number';
-      input.placeholder = 'اليوم ' + i;
       input.value = localStorage.getItem('day' + i) || '';
       input.oninput = () => localStorage.setItem('day' + i, input.value);
       input.className = 'day';
-      container.appendChild(input);
+      tdInput.appendChild(input);
+      tr.appendChild(tdLabel);
+      tr.appendChild(tdInput);
+      container.appendChild(tr);
     }
     function calculate() {
       let total = 0, count = 0, min = Infinity, max = -Infinity;
@@ -153,7 +155,10 @@
             backgroundColor: 'rgba(75, 192, 192, 0.5)'
           }]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
       });
       document.getElementById('collected').innerText = total;
       document.getElementById('remaining').innerText = remaining;
@@ -187,9 +192,8 @@
       const daily = parseInt(document.getElementById('currentCigs').value);
       const years = parseInt(document.getElementById('smokeYears').value);
       const totalCigs = daily * days;
-      const totalNic = totalCigs;
       const cost = Math.ceil((totalCigs / perPack) * price);
-      document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalNic} ملغ<br>💸 التوفير: ${cost} دج`;
+      document.getElementById('quitResults').innerHTML = `💨 نيكوتين محتمل: ${totalCigs} ملغ<br>💸 التوفير: ${cost} دج`;
       const quotes = [
         '💪 كل يوم بدون تدخين هو نصر صغير!',
         '🚀 أنت أقوى من العادة!',
@@ -219,7 +223,10 @@
             tension: 0.1
           }]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
       });
     }
     window.onload = calculate;
