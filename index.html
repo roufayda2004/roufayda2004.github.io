@@ -1,269 +1,494 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kora Max - Football News</title>
-    
+    <title>Unstable Universe Shop</title>
+    <!-- Include Google Fonts for Minecraft Style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pixel: ['"Press Start 2P"', 'cursive'],
+                        body: ['"VT323"', 'monospace'],
+                    },
+                    colors: {
+                        mcStone: '#C6C6C6',
+                        mcStoneDark: '#555555',
+                        mcGrass: '#388E3C',
+                        mcGrassLight: '#4CAF50',
+                        mcDark: '#111111',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* General body styles */
+        /* Minecraft Styles */
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: 'VT323', monospace;
+            background-color: #4A4A4A;
+            /* Blocky background pattern */
+            background-image: url('data:image/svg+xml;utf8,<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" fill="%23505050"/><rect x="32" width="32" height="32" fill="%234A4A4A"/><rect y="32" width="32" height="32" fill="%234A4A4A"/><rect x="32" y="32" width="32" height="32" fill="%23505050"/></svg>');
+            background-size: 64px 64px;
+            image-rendering: pixelated;
+            color: #333333;
+            font-size: 1.25rem;
         }
 
-        /* Header styling */
-        header {
-            background-color: #27ae60;
-            color: white;
-            padding: 1rem;
-            display: flex; /* Using flexbox to align logo and title */
-            justify-content: center;
-            align-items: center;
+        /* Standard Minecraft UI Panel */
+        .mc-panel {
+            background-color: #C6C6C6;
+            border: 4px solid;
+            border-color: #FFFFFF #555555 #555555 #FFFFFF;
         }
 
-        /* NEW: Logo styling */
-        header img.logo {
-            height: 70px;
-            margin-right: 20px;
+        /* Inset Panel (Like Inventory slots) */
+        .mc-panel-inset {
+            background-color: #8B8B8B;
+            border: 4px solid;
+            border-color: #373737 #FFFFFF #FFFFFF #373737;
         }
 
-        header .site-title h1 {
-            margin: 0;
-            font-size: 3rem;
+        /* Standard Button */
+        .mc-btn {
+            background-color: #C6C6C6;
+            border: 4px solid;
+            border-color: #FFFFFF #555555 #555555 #FFFFFF;
+            color: #111111;
+            text-transform: uppercase;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        .mc-btn:hover {
+            background-color: #9E9E9E;
+        }
+        .mc-btn:active {
+            border-color: #555555 #FFFFFF #FFFFFF #555555;
+            outline: none;
         }
 
-        header .site-title p {
-            margin: 0;
-            text-align: left;
+        /* Green Button (Success/Primary) */
+        .mc-btn-green {
+            background-color: #4CAF50;
+            border: 4px solid;
+            border-color: #A5D6A7 #2E7D32 #2E7D32 #A5D6A7;
+            color: #FFFFFF;
+            text-shadow: 2px 2px 0px #1B5E20;
+            cursor: pointer;
+        }
+        .mc-btn-green:hover {
+            background-color: #66BB6A;
+        }
+        .mc-btn-green:active {
+            border-color: #2E7D32 #A5D6A7 #A5D6A7 #2E7D32;
         }
 
-
-        /* Navigation bar styling */
-        nav {
-            background-color: #2c3e50;
-            text-align: center;
-            padding: 1rem;
-            position: sticky;
-            top: 0;
+        /* Text Shadow for Main Titles */
+        .mc-text-shadow {
+            color: #FFFFFF;
+            text-shadow: 4px 4px 0px #3F3F3F;
         }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        /* Main content area styling */
-        main {
-            padding: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Section styling */
-        section {
-            margin-bottom: 2rem;
-        }
-
-        /* Article styling - this creates the "card" look */
-        article {
-            background-color: white;
-            border-left: 5px solid #27ae60;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        article h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        
-        /* Styling for images inside articles */
-        article img {
-            max-width: 100%;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-        }
-
-        /* NEW: Table styling */
-        table {
+        /* Input Fields (Looks like Minecraft Chat/Sign input) */
+        .mc-input {
+            background-color: #000000;
+            color: #FFFFFF;
+            border: 2px solid #A0A0A0;
+            font-family: 'VT323', monospace;
+            padding: 10px;
             width: 100%;
-            border-collapse: collapse; /* Removes space between borders */
-            margin-top: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .mc-input:focus {
+            outline: 2px solid #FFFFFF;
+            border-color: #FFFFFF;
         }
 
-        table th, table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table thead th {
-            background-color: #2c3e50; /* Dark header for the table */
+        /* Custom Checkbox/Radio */
+        input[type="radio"]:checked + .mc-btn {
+            background-color: #388E3C;
+            border-color: #1B5E20 #A5D6A7 #A5D6A7 #1B5E20;
             color: white;
-            font-weight: bold;
+            text-shadow: 2px 2px 0px #1B5E20;
         }
 
-        table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Zebra-striping for readability */
+        /* Hide scrollbar for the modal */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-        
-        table tbody tr:hover {
-            background-color: #f1f1f1; /* Highlight row on hover */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-
-        /* Footer styling */
-        footer {
-            background-color: #27ae60;
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        /* NEW: Social Links styling */
-        .social-links {
-            margin-top: 1rem;
-        }
-        
-        .social-links a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-            font-size: 1.2rem;
-            padding: 8px 12px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        
-        .social-links a:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-
     </style>
 </head>
-<body>
+<body class="antialiased relative">
 
-    <header>
-        <img src="http://googleusercontent.com/generated_image_content/0" alt="Kora Max Logo" class="logo">
-        <div class="site-title">
-            <h1>Kora Max</h1>
-            <p>Your Ultimate Football Source</p>
+    <!-- Header Panel -->
+    <header class="mc-panel sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <!-- CSS Minecraft Grass Block Icon -->
+                <div class="w-8 h-8 border-4 border-[#373737] bg-[#8B4513] relative shadow-md">
+                    <div class="absolute top-0 left-0 right-0 h-3 bg-[#4CAF50] border-b-2 border-[#388E3C]"></div>
+                </div>
+                <h1 class="font-pixel text-sm md:text-lg text-mcDark tracking-widest mt-1">
+                    UNSTABLE <span class="text-mcGrassDark font-bold">SHOP</span>
+                </h1>
+            </div>
+            <div>
+                <span class="mc-panel-inset px-3 py-1 text-white text-lg drop-shadow-md">
+                    HP: 100/100
+                </span>
+            </div>
         </div>
     </header>
 
-    <nav>
-        <a href="#news">Latest News</a>
-        <a href="#deals">Transfer Deals</a>
-        <a href="#standings">Standings</a>
-        <a href="#history">History Facts</a>
-    </nav>
+    <!-- Hero Section -->
+    <section class="py-12 md:py-20 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-pixel text-2xl md:text-4xl mb-6 mc-text-shadow leading-relaxed">GEAR UP WITH UNSTABLE SHIRTS</h2>
+            <p class="font-body text-white text-2xl md:text-3xl mb-8 drop-shadow-md">Exclusive collection of gaming shirts, Unstable variants, and Eggchan characters.</p>
+            <div class="inline-block mc-btn-green py-3 px-8 text-2xl md:text-3xl tracking-widest">
+                PRICE: $25
+            </div>
+        </div>
+    </section>
 
-    <main>
-        <section id="news">
-            <h2>Latest News</h2>
-            <article>
-                <img src="https://placehold.co/800x400/27ae60/FFFFFF?text=Team+Celebration" alt="Team A celebrating with the trophy">
-                <h3>Team A Wins the Championship!</h3>
-                <p>In a thrilling final, Team A secured the victory with a last-minute goal. The crowd went wild as the captain lifted the trophy.</p>
-            </article>
-        </section>
+    <!-- Products Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-12">
+        <div class="mb-8">
+            <h3 class="font-pixel text-xl mc-text-shadow">INVENTORY</h3>
+        </div>
 
-        <section id="deals">
-            <h2>Transfer Deals</h2>
-            <article>
-                <img src="https://placehold.co/800x400/2c3e50/FFFFFF?text=New+Signing" alt="New player signing a contract">
-                <h3>Record-Breaking Transfer Confirmed</h3>
-                <p>The young prodigy has been signed by a top club for a world-record fee, making it the biggest deal of the summer transfer window.</p>
-            </article>
-        </section>
-
-        <section id="standings">
-            <h2>League Standings</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Team</th>
-                        <th>P</th>
-                        <th>W</th>
-                        <th>D</th>
-                        <th>L</th>
-                        <th>Pts</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Jijel FC</td>
-                        <td>28</td>
-                        <td>20</td>
-                        <td>5</td>
-                        <td>3</td>
-                        <td>65</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Constantine United</td>
-                        <td>28</td>
-                        <td>18</td>
-                        <td>6</td>
-                        <td>4</td>
-                        <td>60</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Algiers City</td>
-                        <td>28</td>
-                        <td>15</td>
-                        <td>7</td>
-                        <td>6</td>
-                        <td>52</td>
-                    </tr>
-                     <tr>
-                        <td>4</td>
-                        <td>Oran Wanderers</td>
-                        <td>28</td>
-                        <td>14</td>
-                        <td>8</td>
-                        <td>6</td>
-                        <td>50</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-        
-        <section id="history">
-            <h2>Historical Football Facts</h2>
-            <article>
-                <h3>The First World Cup</h3>
-                <p>The first-ever FIFA World Cup was held in 1930 in Uruguay. The host nation became the first-ever world champion.</p>
-            </article>
-        </section>
+        <!-- Products will be injected here via JS -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Products -->
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Kora Max. All rights reserved.</p>
-        <div class="social-links">
-            <a href="#">Facebook</a>
-            <a href="#">Twitter</a>
-            <a href="#">Instagram</a>
+    <!-- Footer -->
+    <footer class="mc-panel mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-mcDark text-xl">
+            <p>SERVER: Unstable Universe Shop &copy; 2026.</p>
+            <p class="mt-2 text-gray-700">CONNECTION: SECURE</p>
         </div>
     </footer>
 
+    <!-- Order Modal (Inventory GUI) -->
+    <div id="order-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70 p-4 opacity-0 transition-opacity duration-200">
+        <!-- Minecraft style container -->
+        <div class="mc-panel w-full max-w-lg max-h-full overflow-y-auto no-scrollbar" id="modal-content">
+            
+            <!-- Modal Header -->
+            <div class="border-b-4 border-[#555555] px-6 py-4 flex justify-between items-center bg-[#C6C6C6] sticky top-0 z-10">
+                <h4 class="font-pixel text-sm md:text-base text-black">CRAFTING / ORDER</h4>
+                <button onclick="closeModal()" class="mc-btn px-3 py-1 text-xl font-bold hover:text-red-600">
+                    X
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- Selected Product Details -->
+                <div class="flex gap-4 items-center mb-6 mc-panel-inset p-3">
+                    <img id="modal-image" src="" alt="Product" class="w-24 h-24 object-cover bg-mcStone border-4 border-[#555555] pixelated">
+                    <div>
+                        <h5 id="modal-title" class="font-bold text-2xl text-white drop-shadow-md">Product Name</h5>
+                        <p class="text-[#4CAF50] font-bold mt-1 text-3xl drop-shadow-md">$25</p>
+                    </div>
+                </div>
+
+                <!-- Order Form -->
+                <form id="order-form" class="space-y-6">
+                    
+                    <!-- Size Selection -->
+                    <div>
+                        <label class="block text-xl font-bold text-black mb-2">SIZE <span class="text-red-600">*</span></label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="S" class="peer sr-only" required>
+                                <div class="mc-btn text-center py-2 text-2xl">S</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="M" class="peer sr-only" required>
+                                <div class="mc-btn text-center py-2 text-2xl">M</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="L" class="peer sr-only" required checked>
+                                <div class="mc-btn text-center py-2 text-2xl">L</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="XL" class="peer sr-only" required>
+                                <div class="mc-btn text-center py-2 text-2xl">XL</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quantity Selection -->
+                    <div>
+                        <label class="block text-xl font-bold text-black mb-2">QUANTITY <span class="text-red-600">*</span></label>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="updateQty(-1)" class="mc-btn w-12 h-12 flex items-center justify-center text-3xl font-bold">-</button>
+                            <input type="text" id="quantity" value="1" class="mc-panel-inset w-16 h-12 text-center text-3xl text-white drop-shadow-md" readonly>
+                            <button type="button" onclick="updateQty(1)" class="mc-btn w-12 h-12 flex items-center justify-center text-3xl font-bold">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Customer Details -->
+                    <div class="space-y-4 pt-4 border-t-4 border-[#8B8B8B]">
+                        <div>
+                            <label class="block text-xl font-bold text-black mb-1">PLAYER NAME <span class="text-red-600">*</span></label>
+                            <input type="text" id="customer-name" required placeholder="Enter your full name" class="mc-input text-xl">
+                        </div>
+                        <div>
+                            <label class="block text-xl font-bold text-black mb-1">PHONE NUMBER <span class="text-red-600">*</span></label>
+                            <input type="tel" id="customer-phone" required placeholder="e.g., 0555000000" class="mc-input text-xl">
+                        </div>
+                        <div>
+                            <label class="block text-xl font-bold text-black mb-1">SPAWN POINT (ADDRESS) <span class="text-red-600">*</span></label>
+                            <textarea id="customer-address" required rows="2" placeholder="State, City, Street, etc." class="mc-input text-xl"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="mc-panel-inset p-4 flex justify-between items-center">
+                        <span class="font-bold text-white text-2xl drop-shadow-md">TOTAL:</span>
+                        <span id="total-price" class="text-3xl font-bold text-[#4CAF50] drop-shadow-md">$25</span>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message" class="hidden text-white bg-red-600 border-4 border-[#800000] p-3 text-xl font-bold text-center">
+                        COMMAND FAILED: FILL ALL FIELDS!
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="button" onclick="submitOrder()" class="mc-btn-green w-full py-4 text-2xl font-bold flex items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                        </svg>
+                        SEND MESSAGE (WHATSAPP)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        /* ================================================================
+         AUDIO SYSTEM: Retro Nokia Phone Beep Synthesizer
+        ================================================================
+        */
+        let audioCtx;
+        function playNokiaBeep() {
+            // Initialize AudioContext lazily on first click to bypass browser blocks
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            // Nokia keypad tone characteristics (Triangle wave, ~1000Hz)
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // C6 Note
+            
+            // Envelope: Quick attack, short sustain, quick release (0.1 seconds total)
+            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime); // Volume
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Attach beep sound to all buttons and labels (for size radio buttons)
+        document.addEventListener('click', function(e) {
+            // Check if the clicked element is a button or a custom radio label
+            if (e.target.closest('button') || e.target.closest('label.cursor-pointer')) {
+                playNokiaBeep();
+            }
+        });
+
+        /* ================================================================
+         Store Settings: Replace this number with your actual WhatsApp number.
+        ================================================================
+        */
+        const MERCHANT_WHATSAPP_NUMBER = "213000000000"; // Add your number here
+        const SHIRT_PRICE = 25; // Price in USD
+
+        // Product Data utilizing uploaded images
+        const products = [
+            { id: 1, name: "EGGCHAN (WHITE)", image: "1000027405.jpg" },
+            { id: 2, name: "UNSTABLE (YELLOW KING)", image: "1000027403.jpg" },
+            { id: 3, name: "UNSTABLE (DARK RAINBOW)", image: "1000027403.jpg" },
+            { id: 4, name: "UNSTABLE (BLUE PARROT)", image: "1000027403.jpg" },
+            { id: 5, name: "UNSTABLE (DARK FIRE)", image: "1000027403.jpg" },
+            { id: 6, name: "UNSTABLE (TEAL CYBORG)", image: "1000027403.jpg" },
+            { id: 7, name: "UNSTABLE (PURPLE KING)", image: "1000027403.jpg" }
+        ];
+
+        let selectedProduct = null;
+        let quantity = 1;
+
+        // Render products to the DOM with Minecraft styled cards
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'mc-panel flex flex-col hover:-translate-y-1 transition-transform duration-200 shadow-lg';
+                
+                // Minecraft Card design
+                card.innerHTML = `
+                    <div class="aspect-square mc-panel-inset m-3 p-2 flex items-center justify-center">
+                        <img src="${product.image}" alt="${product.name}" class="object-contain w-full h-full pixelated drop-shadow-xl">
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow text-center">
+                        <h4 class="font-bold text-2xl text-black mb-3">${product.name}</h4>
+                        <div class="mt-auto flex flex-col gap-3">
+                            <span class="text-3xl font-bold text-[#388E3C]">$${SHIRT_PRICE}</span>
+                            <button onclick="openModal(${product.id})" class="mc-btn py-2 text-xl w-full">
+                                ADD TO INV.
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Open the order modal
+        function openModal(productId) {
+            selectedProduct = products.find(p => p.id === productId);
+            if (!selectedProduct) return;
+
+            // Reset form
+            document.getElementById('order-form').reset();
+            quantity = 1;
+            document.getElementById('quantity').value = quantity;
+            updateTotalPrice();
+            document.getElementById('error-message').classList.add('hidden');
+            
+            // Set default size to L
+            document.querySelector('input[name="size"][value="L"]').checked = true;
+
+            // Fill modal details
+            document.getElementById('modal-title').textContent = selectedProduct.name;
+            document.getElementById('modal-image').src = selectedProduct.image;
+
+            // Show modal
+            const modal = document.getElementById('order-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close the order modal
+        function closeModal() {
+            const modal = document.getElementById('order-modal');
+            modal.classList.add('opacity-0');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+
+            document.body.style.overflow = 'auto';
+            selectedProduct = null;
+        }
+
+        // Update quantity
+        function updateQty(change) {
+            const newQty = quantity + change;
+            if (newQty >= 1 && newQty <= 10) {
+                quantity = newQty;
+                document.getElementById('quantity').value = quantity;
+                updateTotalPrice();
+            }
+        }
+
+        // Update total price
+        function updateTotalPrice() {
+            const total = quantity * SHIRT_PRICE;
+            document.getElementById('total-price').textContent = `$${total}`;
+        }
+
+        // Submit order to WhatsApp
+        function submitOrder() {
+            const sizeRadio = document.querySelector('input[name="size"]:checked');
+            const name = document.getElementById('customer-name').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const address = document.getElementById('customer-address').value.trim();
+            const errorMsgDiv = document.getElementById('error-message');
+
+            // Form validation
+            if (!sizeRadio || !name || !phone || !address) {
+                errorMsgDiv.classList.remove('hidden');
+                return;
+            }
+
+            errorMsgDiv.classList.add('hidden');
+            const size = sizeRadio.value;
+            const total = quantity * SHIRT_PRICE;
+
+            // WhatsApp Message Template
+            const message = `
+*--- MINECRAFT SHOP ORDER ---* ⛏️
+
+*📦 LOOT DETAILS:*
+- Item: ${selectedProduct.name}
+- Size: ${size}
+- Count: ${quantity}
+- Total Price: $${total}
+
+*👤 PLAYER DETAILS:*
+- Gamertag (Name): ${name}
+- Comms (Phone): ${phone}
+- Spawn Point (Address): ${address}
+
+_Awaiting order confirmation._
+            `.trim();
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${MERCHANT_WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+            closeModal();
+        }
+
+        // Close modal on outside click
+        document.getElementById('order-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Init App
+        document.addEventListener('DOMContentLoaded', renderProducts);
+    </script>
 </body>
 </html>
+
+
+```
