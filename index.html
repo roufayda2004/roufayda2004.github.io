@@ -3,160 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجري للقمصان</title>
-    <!-- استدعاء مكتبة PayPal لدعم الدفع بـ Visa/Mastercard/PayPal -->
-    <!-- تنبيه: استبدل YOUR_CLIENT_ID بمعرف العميل الخاص بحسابك في بايبال -->
+    <title>unstable store</title>
     <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
     <style>
+        /* إعدادات الألوان المطلوبة */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
-            --bg-color: #f4f7f6;
+            --bg-color: #0d0d0d; /* أسود */
+            --card-bg: #1a1a1a; /* رمادي داكن جداً للبطاقات */
+            --gold: #d4af37; /* ذهبي */
+            --dark-red: #8b0000; /* أحمر غامق */
+            --text-light: #ffffff;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
+            color: var(--text-light);
             margin: 0;
             padding: 0;
         }
+
         header {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: #000000;
+            border-bottom: 3px solid var(--gold);
             padding: 20px;
             text-align: center;
         }
+
+        header h1 {
+            color: var(--gold);
+            font-size: 2.5em;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .shipping-banner {
+            background-color: var(--dark-red);
+            color: var(--text-light);
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
         .container {
             display: flex;
             flex-wrap: wrap;
-            padding: 20px;
-            gap: 20px;
-            max-width: 1200px;
+            padding: 30px;
+            gap: 30px;
+            max-width: 1300px;
             margin: auto;
         }
-        .products-grid {
+
+        /* تصميم المعرض (Gallery) */
+        .gallery {
             flex: 3;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
         }
+
         .product-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
             text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
         }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+
         .product-card img {
             width: 100%;
-            height: 250px;
+            height: 300px;
             object-fit: cover;
-            border-radius: 5px;
+            border-bottom: 2px solid var(--gold);
         }
-        .price {
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-title {
             font-size: 1.2em;
-            color: var(--secondary-color);
-            font-weight: bold;
             margin: 10px 0;
+            color: var(--text-light);
         }
+
+        .price {
+            font-size: 1.4em;
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
         button.add-to-cart {
-            background-color: var(--primary-color);
+            background-color: var(--dark-red);
             color: white;
-            border: none;
-            padding: 10px 15px;
+            border: 1px solid var(--dark-red);
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
-            font-size: 1em;
+            font-size: 1.1em;
+            font-weight: bold;
             transition: 0.3s;
         }
+
         button.add-to-cart:hover {
-            background-color: #34495e;
+            background-color: #a80000;
+            border-color: var(--gold);
         }
+
+        /* سلة المشتريات */
         .cart-section {
             flex: 1;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid var(--gold);
             height: fit-content;
+            min-width: 300px;
         }
+
+        .cart-section h2 {
+            color: var(--gold);
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
         .cart-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #444;
             padding-bottom: 5px;
         }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 1.1em;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 1.3em;
+            color: var(--gold);
+            font-weight: bold;
+            border-top: 2px solid var(--dark-red);
+            padding-top: 10px;
+        }
+
         #paypal-button-container {
-            margin-top: 20px;
-            display: none; /* مخفي حتى يتم إضافة منتجات */
+            margin-top: 25px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>متجر القمصان الحصري</h1>
-        <p>أفضل التصميمات بجودة عالية</p>
+        <h1>unstable store</h1>
     </header>
+    
+    <div class="shipping-banner">
+        ✈️ شحن متاح لجميع دول العالم | Worldwide Shipping
+    </div>
 
     <div class="container">
-        <!-- قسم المنتجات -->
-        <div class="products-grid">
-            <!-- المنتج الأول -->
-            <div class="product-card">
-                <!-- يمكنك رفع صورك وتغيير الرابط هنا -->
-                <img src="https://via.placeholder.com/250x250?text=T-Shirt+1" alt="قميص أسود">
-                <h3>قميص أسود كلاسيكي</h3>
-                <div class="price">25.00$</div>
-                <button class="add-to-cart" onclick="addToCart('قميص أسود كلاسيكي', 25.00)">أضف إلى السلة</button>
+        <div class="gallery" id="products-gallery">
             </div>
 
-            <!-- المنتج الثاني -->
-            <div class="product-card">
-                <img src="https://via.placeholder.com/250x250?text=T-Shirt+2" alt="قميص أبيض">
-                <h3>قميص أبيض رياضي</h3>
-                <div class="price">30.00$</div>
-                <button class="add-to-cart" onclick="addToCart('قميص أبيض رياضي', 30.00)">أضف إلى السلة</button>
-            </div>
-            
-            <!-- يمكنك نسخ ولصق الـ product-card لإضافة قمصان أو منتجات أخرى -->
-        </div>
-
-        <!-- قسم سلة المشتريات والدفع -->
         <div class="cart-section">
             <h2>سلة المشتريات</h2>
             <div id="cart-items">
-                <p>السلة فارغة حالياً.</p>
+                <p style="text-align: center; color: #888;">السلة فارغة حالياً.</p>
             </div>
-            <h3 id="total-price" style="display: none;">المجموع: <span id="total-amount">0</span>$</h3>
             
-            <!-- أزرار الدفع (تظهر تلقائياً عبر سكربت بايبال) -->
+            <div id="cart-summary" style="display: none;">
+                <div class="summary-row">
+                    <span>المشتريات:</span>
+                    <span><span id="subtotal-amount">0</span>$</span>
+                </div>
+                <div class="summary-row">
+                    <span>الشحن الدولي:</span>
+                    <span><span id="shipping-amount">10.00</span>$</span>
+                </div>
+                <div class="total-row">
+                    <span>الإجمالي:</span>
+                    <span><span id="total-amount">0</span>$</span>
+                </div>
+            </div>
+            
             <div id="paypal-button-container"></div>
         </div>
     </div>
 
     <script>
-        let cart = [];
-        let total = 0;
+        // قائمة المنتجات مع الصور التي رفعتها والأسعار (يمكنك تعديل الأسعار من هنا)
+        const products = [
+            { id: 1, name: "Eggchan T-Shirt - Beige", price: 25.99, image: "1000028228.jpg" },
+            { id: 2, name: "You're special - Purple", price: 25.99, image: "1000027484.jpg" },
+            { id: 3, name: "wemmbuc T-Shirt", price: 25.99, image: "1000027485.jpg" },
+            { id: 4, name: "Eggchan T-Shirt - White", price: 25.00, image: "1000027405.jpg" },
+            { id: 5, name: "UNSTABLE Collection", price: 120.00, image: "1000027403.jpg" },
+            { id: 6, name: "I LOVE Collection", price: 205.00, image: "1000027402.png" }
+        ];
 
-        // دالة لإضافة المنتجات للسلة
+        // تكلفة الشحن الدولي الثابتة (يمكنك تغييرها)
+        const SHIPPING_COST = 15.00; 
+
+        let cart = [];
+        let subtotal = 0;
+
+        // عرض المنتجات في المعرض
+        const gallery = document.getElementById('products-gallery');
+        products.forEach(product => {
+            gallery.innerHTML += `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="product-info">
+                        <div class="product-title">${product.name}</div>
+                        <div class="price">${product.price.toFixed(2)}$</div>
+                        <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price})">أضف إلى السلة</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // إضافة للسلة
         function addToCart(name, price) {
             cart.push({name, price});
-            total += price;
+            subtotal += price;
             updateCartDisplay();
         }
 
-        // دالة لتحديث واجهة السلة
+        // تحديث السلة
         function updateCartDisplay() {
             const cartItemsDiv = document.getElementById('cart-items');
-            const totalElement = document.getElementById('total-price');
-            const amountElement = document.getElementById('total-amount');
+            const cartSummary = document.getElementById('cart-summary');
+            const subtotalElement = document.getElementById('subtotal-amount');
+            const totalElement = document.getElementById('total-amount');
             const paypalContainer = document.getElementById('paypal-button-container');
 
             if (cart.length === 0) {
-                cartItemsDiv.innerHTML = '<p>السلة فارغة حالياً.</p>';
-                totalElement.style.display = 'none';
+                cartItemsDiv.innerHTML = '<p style="text-align: center; color: #888;">السلة فارغة حالياً.</p>';
+                cartSummary.style.display = 'none';
                 paypalContainer.style.display = 'none';
                 return;
             }
@@ -166,48 +269,54 @@
                 cartItemsDiv.innerHTML += `
                     <div class="cart-item">
                         <span>${item.name}</span>
-                        <span>${item.price.toFixed(2)}$</span>
+                        <span style="color: var(--gold);">${item.price.toFixed(2)}$</span>
                     </div>
                 `;
             });
 
-            amountElement.innerText = total.toFixed(2);
-            totalElement.style.display = 'block';
+            let finalTotal = subtotal + SHIPPING_COST;
+
+            subtotalElement.innerText = subtotal.toFixed(2);
+            totalElement.innerText = finalTotal.toFixed(2);
+            
+            cartSummary.style.display = 'block';
             paypalContainer.style.display = 'block';
         }
 
-        // إعداد أزرار الدفع الخاصة بـ PayPal و Visa/Mastercard
+        // إعداد بايبال والدفع
         paypal.Buttons({
-            // إنشاء الطلب بالمبلغ الإجمالي
             createOrder: function(data, actions) {
+                let finalTotal = subtotal + SHIPPING_COST;
                 return actions.order.create({
                     purchase_units: [{
+                        description: "مشتريات من unstable store",
                         amount: {
-                            value: total.toFixed(2) // نمرر المجموع الكلي هنا
+                            currency_code: "USD",
+                            value: finalTotal.toFixed(2),
+                            breakdown: {
+                                item_total: { currency_code: "USD", value: subtotal.toFixed(2) },
+                                shipping: { currency_code: "USD", value: SHIPPING_COST.toFixed(2) }
+                            }
                         }
                     }]
                 });
             },
-            // ما يحدث بعد الدفع بنجاح
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    alert('تم الدفع بنجاح بواسطة ' + details.payer.name.given_name + '! سيتم تجهيز طلبك.');
-                    // هنا يمكنك إرسال بيانات الطلب إلى قاعدة بياناتك
+                    alert('تم الدفع بنجاح! شكراً لك ' + details.payer.name.given_name + ' على الشراء من unstable store. سيتم شحن طلبك قريباً.');
                     cart = [];
-                    total = 0;
+                    subtotal = 0;
                     updateCartDisplay();
                 });
             },
-            // في حالة إلغاء العملية
             onCancel: function (data) {
                 alert('تم إلغاء عملية الدفع.');
             },
-            // في حالة حدوث خطأ
             onError: function (err) {
                 console.error(err);
-                alert('حدث خطأ أثناء معالجة الدفع.');
+                alert('حدث خطأ أثناء الاتصال ببوابة الدفع.');
             }
-        }).render('#paypal-button-container'); // عرض الأزرار في هذا القسم
+        }).render('#paypal-button-container');
     </script>
 </body>
 </html>
