@@ -1,322 +1,542 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>unstable store</title>
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
+    <title>HealthTracker Pro | لوحة التحكم</title>
+    
+    <!-- مكتبة الأيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة الرسوم البيانية Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- خطوط جوجل (تاجوال) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- ==================== قسم التنسيقات (CSS) ==================== -->
     <style>
-        /* إعدادات الألوان المطلوبة */
         :root {
-            --bg-color: #0d0d0d; /* أسود */
-            --card-bg: #1a1a1a; /* رمادي داكن جداً للبطاقات */
-            --gold: #d4af37; /* ذهبي */
-            --dark-red: #8b0000; /* أحمر غامق */
-            --text-light: #ffffff;
+            /* ألوان الوضع الفاتح */
+            --bg-color: #e0e5ec;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --primary-color: #2ECC71;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --sidebar-hover: rgba(46, 204, 113, 0.2);
+        }
+
+        [data-theme="dark"] {
+            /* ألوان الوضع الليلي */
+            --bg-color: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            --sidebar-hover: rgba(46, 204, 113, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-light);
-            margin: 0;
-            padding: 0;
+            color: var(--text-primary);
+            transition: background 0.4s ease, color 0.4s ease;
+            min-height: 100vh;
+            overflow: hidden; /* لمنع التمرير العام والاعتماد على المحتوى الداخلي */
         }
+
+        /* تأثير الزجاج (Glassmorphism) */
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        /* الهيكل العام */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            width: 260px;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            text-decoration: none;
+            color: var(--text-primary);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu a:hover {
+            background: var(--sidebar-hover);
+            transform: translateX(-5px);
+        }
+
+        .menu a.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .theme-toggle {
+            margin-top: auto;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            border-radius: 12px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--sidebar-hover);
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            overflow-y: auto;
+            padding-right: 10px;
+            padding-bottom: 20px;
+        }
+
+        /* تخصيص شريط التمرير */
+        .main-content::-webkit-scrollbar { width: 8px; }
+        .main-content::-webkit-scrollbar-track { background: transparent; }
+        .main-content::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 10px; }
 
         header {
-            background-color: #000000;
-            border-bottom: 3px solid var(--gold);
-            padding: 20px;
-            text-align: center;
-        }
-
-        header h1 {
-            color: var(--gold);
-            font-size: 2.5em;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .shipping-banner {
-            background-color: var(--dark-red);
-            color: var(--text-light);
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-
-        .container {
             display: flex;
-            flex-wrap: wrap;
-            padding: 30px;
-            gap: 30px;
-            max-width: 1300px;
-            margin: auto;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
         }
 
-        /* تصميم المعرض (Gallery) */
-        .gallery {
-            flex: 3;
+        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        header p { color: var(--text-secondary); }
+
+        .user-profile {
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .user-profile:hover { transform: scale(1.05); }
+        .user-profile img { border-radius: 50%; width: 50px; height: 50px; }
+
+        /* شبكة الإحصائيات السريعة */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
         }
 
-        .product-card {
-            background-color: var(--card-bg);
-            border: 1px solid #333;
+        .stat-card {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            gap: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.calories { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
+        .stat-icon.water { background: linear-gradient(135deg, #4dabf7, #1e90ff); }
+        .stat-icon.steps { background: linear-gradient(135deg, #51cf66, #2ed573); }
+        .stat-icon.sleep { background: linear-gradient(135deg, #845ef7, #7bed9f); }
+
+        .stat-info { flex: 1; }
+        .stat-info h3 { font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;}
+        .stat-info p { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(128, 128, 128, 0.2);
             border-radius: 10px;
             overflow: hidden;
-            text-align: center;
-            transition: transform 0.3s, border-color 0.3s;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--gold);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        .progress { height: 100%; border-radius: 10px; transition: width 1s ease-in-out; }
+
+        /* قسم الرسوم البيانية */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
         }
 
-        .product-card img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--gold);
-        }
-
-        .product-info {
-            padding: 15px;
-        }
-
-        .product-title {
-            font-size: 1.2em;
-            margin: 10px 0;
-            color: var(--text-light);
-        }
-
-        .price {
-            font-size: 1.4em;
-            color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        button.add-to-cart {
-            background-color: var(--dark-red);
-            color: white;
-            border: 1px solid var(--dark-red);
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        button.add-to-cart:hover {
-            background-color: #a80000;
-            border-color: var(--gold);
-        }
-
-        /* سلة المشتريات */
-        .cart-section {
-            flex: 1;
-            background-color: var(--card-bg);
+        .chart-container {
             padding: 25px;
-            border-radius: 10px;
-            border: 1px solid var(--gold);
-            height: fit-content;
-            min-width: 300px;
-        }
-
-        .cart-section h2 {
-            color: var(--gold);
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .cart-item {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            border-bottom: 1px dashed #444;
-            padding-bottom: 5px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .summary-row {
+        .chart-container h3 {
+            align-self: flex-start;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 250px;
             display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 1.1em;
+            justify-content: center;
         }
 
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 1.3em;
-            color: var(--gold);
-            font-weight: bold;
-            border-top: 2px solid var(--dark-red);
-            padding-top: 10px;
+        /* التجاوب مع الشاشات الصغيرة */
+        @media (max-width: 900px) {
+            .charts-section { grid-template-columns: 1fr; }
         }
 
-        #paypal-button-container {
-            margin-top: 25px;
-            display: none;
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; padding: 10px; height: auto; overflow: auto;}
+            body { overflow: auto; }
+            .sidebar { 
+                width: 100%; 
+                flex-direction: row; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 15px; 
+            }
+            .logo { margin-bottom: 0; }
+            .menu { display: none; /* إخفاء القائمة في الموبايل مؤقتاً */ }
+            .theme-toggle { margin-top: 0; padding: 5px; }
+            .theme-toggle span { display: none; }
+            .main-content { overflow-y: visible; padding-right: 0; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>unstable store</h1>
-    </header>
-    
-    <div class="shipping-banner">
-        ✈️ شحن متاح لجميع دول العالم | Worldwide Shipping
+    <!-- ==================== هيكل الصفحة (HTML) ==================== -->
+    <div class="app-container">
+        
+        <!-- القائمة الجانبية -->
+        <aside class="sidebar glass-effect">
+            <div class="logo">
+                <i class="fa-solid fa-leaf"></i>
+                <h2>HealthTracker</h2>
+            </div>
+            <nav class="menu">
+                <a href="#" class="active"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a>
+                <a href="#"><i class="fa-solid fa-utensils"></i> إدارة الطعام</a>
+                <a href="#"><i class="fa-solid fa-dumbbell"></i> التمارين</a>
+                <a href="#"><i class="fa-solid fa-weight-scale"></i> الوزن</a>
+                <a href="#"><i class="fa-solid fa-robot"></i> الذكاء الاصطناعي</a>
+                <a href="#"><i class="fa-solid fa-gear"></i> الإعدادات</a>
+            </nav>
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="fa-solid fa-moon"></i>
+                <span>الوضع الليلي</span>
+            </div>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content">
+            <header>
+                <div>
+                    <h1>مرحباً بك! 👋</h1>
+                    <p>إليك ملخص صحتك وعاداتك لهذا اليوم</p>
+                </div>
+                <div class="user-profile glass-effect">
+                    <img src="https://ui-avatars.com/api/?name=User&background=2ECC71&color=fff&bold=true" alt="Profile">
+                </div>
+            </header>
+
+            <!-- بطاقات الإحصائيات السريعة -->
+            <section class="stats-grid">
+                <!-- بطاقة السعرات -->
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon calories"><i class="fa-solid fa-fire"></i></div>
+                    <div class="stat-info">
+                        <h3>السعرات الحرارية</h3>
+                        <p id="calories-display">1450 / 2200 <small>kcal</small></p>
+                        <div class="progress-bar"><div class="progress" style="width: 65%; background: #ff6b6b;"></div></div>
+                    </div>
+                </div>
+                
+                <!-- بطاقة الماء -->
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon water"><i class="fa-solid fa-droplet"></i></div>
+                    <div class="stat-info">
+                        <h3>الماء المشروب</h3>
+                        <p id="water-display">1.8 / 3 <small>Ltr</small></p>
+                        <div class="progress-bar"><div class="progress" style="width: 60%; background: #4dabf7;"></div></div>
+                    </div>
+                </div>
+
+                <!-- بطاقة الخطوات -->
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon steps"><i class="fa-solid fa-shoe-prints"></i></div>
+                    <div class="stat-info">
+                        <h3>الخطوات اليومية</h3>
+                        <p id="steps-display">7,230 / 10,000</p>
+                        <div class="progress-bar"><div class="progress" style="width: 72%; background: #51cf66;"></div></div>
+                    </div>
+                </div>
+
+                <!-- بطاقة النوم -->
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon sleep"><i class="fa-solid fa-bed"></i></div>
+                    <div class="stat-info">
+                        <h3>جودة النوم</h3>
+                        <p id="sleep-display">7h 15m / 8h</p>
+                        <div class="progress-bar"><div class="progress" style="width: 90%; background: #845ef7;"></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- الرسوم البيانية -->
+            <section class="charts-section">
+                <div class="chart-container glass-effect">
+                    <h3>المغذيات الكبرى (الماكروز)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="macrosChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container glass-effect">
+                    <h3>تطور الوزن آخر 7 أيام</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
-    <div class="container">
-        <div class="gallery" id="products-gallery">
-            </div>
-
-        <div class="cart-section">
-            <h2>سلة المشتريات</h2>
-            <div id="cart-items">
-                <p style="text-align: center; color: #888;">السلة فارغة حالياً.</p>
-            </div>
-            
-            <div id="cart-summary" style="display: none;">
-                <div class="summary-row">
-                    <span>المشتريات:</span>
-                    <span><span id="subtotal-amount">0</span>$</span>
-                </div>
-                <div class="summary-row">
-                    <span>الشحن الدولي:</span>
-                    <span><span id="shipping-amount">10.00</span>$</span>
-                </div>
-                <div class="total-row">
-                    <span>الإجمالي:</span>
-                    <span><span id="total-amount">0</span>$</span>
-                </div>
-            </div>
-            
-            <div id="paypal-button-container"></div>
-        </div>
-    </div>
-
+    <!-- ==================== قسم الجافاسكريبت (JS) ==================== -->
     <script>
-        // قائمة المنتجات مع الصور التي رفعتها والأسعار (يمكنك تعديل الأسعار من هنا)
-        const products = [
-            { id: 1, name: "Eggchan T-Shirt - Beige", price: 25.99, image: "1000028228.jpg" },
-            { id: 2, name: "You're special - Purple", price: 25.99, image: "1000027484.jpg" },
-            { id: 3, name: "wemmbuc T-Shirt", price: 25.99, image: "1000027485.jpg" },
-            { id: 4, name: "Eggchan T-Shirt - White", price: 25.00, image: "1000027405.jpg" },
-            { id: 5, name: "UNSTABLE Collection", price: 120.00, image: "1000027403.jpg" },
-            { id: 6, name: "I LOVE Collection", price: 205.00, image: "1000027402.png" }
+        // 1. قاعدة بيانات الأطعمة (JSON مدمج لتسهيل الوصول بدون سيرفر محلي)
+        const foodsDatabase = [
+            { id: "1", name: "أرز أبيض (مطبوخ)", category: "carbs", baseWeight: 100, calories: 130, protein: 2.7, carbs: 28, fat: 0.3, fiber: 0.4 },
+            { id: "2", name: "صدر دجاج (مشوي)", category: "protein", baseWeight: 100, calories: 165, protein: 31, carbs: 0, fat: 3.6, fiber: 0 },
+            { id: "3", name: "شوفان", category: "carbs", baseWeight: 100, calories: 389, protein: 16.9, carbs: 66.3, fat: 6.9, fiber: 10.6 }
         ];
 
-        // تكلفة الشحن الدولي الثابتة (يمكنك تغييرها)
-        const SHIPPING_COST = 15.00; 
-
-        let cart = [];
-        let subtotal = 0;
-
-        // عرض المنتجات في المعرض
-        const gallery = document.getElementById('products-gallery');
-        products.forEach(product => {
-            gallery.innerHTML += `
-                <div class="product-card">
-                    <img src="${product.image}" alt="${product.name}">
-                    <div class="product-info">
-                        <div class="product-title">${product.name}</div>
-                        <div class="price">${product.price.toFixed(2)}$</div>
-                        <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price})">أضف إلى السلة</button>
-                    </div>
-                </div>
-            `;
-        });
-
-        // إضافة للسلة
-        function addToCart(name, price) {
-            cart.push({name, price});
-            subtotal += price;
-            updateCartDisplay();
-        }
-
-        // تحديث السلة
-        function updateCartDisplay() {
-            const cartItemsDiv = document.getElementById('cart-items');
-            const cartSummary = document.getElementById('cart-summary');
-            const subtotalElement = document.getElementById('subtotal-amount');
-            const totalElement = document.getElementById('total-amount');
-            const paypalContainer = document.getElementById('paypal-button-container');
-
-            if (cart.length === 0) {
-                cartItemsDiv.innerHTML = '<p style="text-align: center; color: #888;">السلة فارغة حالياً.</p>';
-                cartSummary.style.display = 'none';
-                paypalContainer.style.display = 'none';
-                return;
+        // 2. كلاس إدارة التخزين المحلي (LocalStorage)
+        class StorageManager {
+            static save(key, data) {
+                localStorage.setItem(key, JSON.stringify(data));
             }
 
-            cartItemsDiv.innerHTML = '';
-            cart.forEach((item, index) => {
-                cartItemsDiv.innerHTML += `
-                    <div class="cart-item">
-                        <span>${item.name}</span>
-                        <span style="color: var(--gold);">${item.price.toFixed(2)}$</span>
-                    </div>
-                `;
-            });
+            static load(key) {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            }
 
-            let finalTotal = subtotal + SHIPPING_COST;
-
-            subtotalElement.innerText = subtotal.toFixed(2);
-            totalElement.innerText = finalTotal.toFixed(2);
-            
-            cartSummary.style.display = 'block';
-            paypalContainer.style.display = 'block';
+            static initDefaultData() {
+                if (!this.load('appSettings')) {
+                    this.save('appSettings', { theme: 'light', goal: 'maintain' });
+                }
+            }
         }
 
-        // إعداد بايبال والدفع
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                let finalTotal = subtotal + SHIPPING_COST;
-                return actions.order.create({
-                    purchase_units: [{
-                        description: "مشتريات من unstable store",
-                        amount: {
-                            currency_code: "USD",
-                            value: finalTotal.toFixed(2),
-                            breakdown: {
-                                item_total: { currency_code: "USD", value: subtotal.toFixed(2) },
-                                shipping: { currency_code: "USD", value: SHIPPING_COST.toFixed(2) }
+        // 3. كلاس إدارة الرسوم البيانية (Chart.js)
+        class DashboardCharts {
+            constructor() {
+                this.macrosChart = null;
+                this.weightChart = null;
+                
+                // متغيرات الألوان لتتناسب مع الوضع الفاتح والليلي
+                this.textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#2d3436';
+                this.gridColor = getComputedStyle(document.documentElement).getPropertyValue('--glass-border').trim() || 'rgba(0,0,0,0.1)';
+            }
+
+            initCharts() {
+                // تدمير الرسوم القديمة إذا كانت موجودة (مهم جداً عند تغيير الوضع الليلي/الفاتح)
+                if (this.macrosChart) this.macrosChart.destroy();
+                if (this.weightChart) this.weightChart.destroy();
+
+                // تحديث الألوان بناءً على الوضع الحالي
+                this.textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+                
+                // --- رسمة المغذيات الكبرى (Doughnut) ---
+                const ctxMacros = document.getElementById('macrosChart').getContext('2d');
+                this.macrosChart = new Chart(ctxMacros, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['البروتين', 'الكربوهيدرات', 'الدهون'],
+                        datasets: [{
+                            data: [120, 210, 55], // بيانات افتراضية
+                            backgroundColor: ['#ff4757', '#1e90ff', '#ffa502'],
+                            borderWidth: 0,
+                            hoverOffset: 10,
+                            cutout: '75%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: this.textColor, font: { family: 'Tajawal', size: 14 } }
                             }
                         }
-                    }]
+                    }
                 });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    alert('تم الدفع بنجاح! شكراً لك ' + details.payer.name.given_name + ' على الشراء من unstable store. سيتم شحن طلبك قريباً.');
-                    cart = [];
-                    subtotal = 0;
-                    updateCartDisplay();
+
+                // --- رسمة تطور الوزن (Line) ---
+                const ctxWeight = document.getElementById('weightChart').getContext('2d');
+                this.weightChart = new Chart(ctxWeight, {
+                    type: 'line',
+                    data: {
+                        labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                        datasets: [{
+                            label: 'الوزن (كجم)',
+                            data: [76.5, 76.2, 76.4, 75.8, 75.5, 75.6, 75.1],
+                            borderColor: '#2ECC71',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            pointBackgroundColor: '#2ECC71',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            fill: true,
+                            backgroundColor: 'rgba(46, 204, 113, 0.15)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { 
+                                ticks: { color: this.textColor, font: {family: 'Tajawal'} },
+                                grid: { color: 'rgba(128,128,128,0.1)' }
+                            },
+                            x: { 
+                                ticks: { color: this.textColor, font: {family: 'Tajawal'} },
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
                 });
-            },
-            onCancel: function (data) {
-                alert('تم إلغاء عملية الدفع.');
-            },
-            onError: function (err) {
-                console.error(err);
-                alert('حدث خطأ أثناء الاتصال ببوابة الدفع.');
             }
-        }).render('#paypal-button-container');
+        }
+
+        // 4. تهيئة التطبيق الأساسي
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // تهيئة قاعدة البيانات والتخزين
+            StorageManager.initDefaultData();
+            let settings = StorageManager.load('appSettings');
+            
+            // كائن الرسوم البيانية
+            const appCharts = new DashboardCharts();
+
+            // نظام الوضع الفاتح والليلي
+            const htmlElement = document.documentElement;
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = themeToggleBtn.querySelector('i');
+            const themeText = themeToggleBtn.querySelector('span');
+
+            function applyTheme(theme) {
+                htmlElement.setAttribute('data-theme', theme);
+                if(theme === 'dark') {
+                    themeIcon.className = 'fa-solid fa-sun';
+                    themeText.textContent = 'الوضع الفاتح';
+                } else {
+                    themeIcon.className = 'fa-solid fa-moon';
+                    themeText.textContent = 'الوضع الليلي';
+                }
+                
+                // إعادة رسم الشارتات لتتحدث ألوان النصوص
+                setTimeout(() => {
+                    appCharts.initCharts();
+                }, 50);
+            }
+
+            // تطبيق الوضع المحفوظ مسبقاً
+            applyTheme(settings.theme);
+
+            // زر تغيير الوضع
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                applyTheme(newTheme);
+                
+                // حفظ التغيير في LocalStorage
+                settings.theme = newTheme;
+                StorageManager.save('appSettings', settings);
+            });
+
+        });
     </script>
 </body>
 </html>
