@@ -37,19 +37,14 @@
             --sidebar-hover: rgba(46, 204, 113, 0.15);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
             transition: background 0.4s ease, color 0.4s ease;
             min-height: 100vh;
-            overflow: hidden; /* لمنع التمرير العام والاعتماد على المحتوى الداخلي */
+            overflow: hidden;
         }
 
         /* تأثير الزجاج (Glassmorphism) */
@@ -63,149 +58,46 @@
         }
 
         /* الهيكل العام */
-        .app-container {
-            display: flex;
-            height: 100vh;
-            padding: 20px;
-            gap: 20px;
-        }
+        .app-container { display: flex; height: 100vh; padding: 20px; gap: 20px; }
 
         /* القائمة الجانبية */
-        .sidebar {
-            width: 260px;
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            font-size: 1.2rem;
-        }
-
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            text-decoration: none;
-            color: var(--text-primary);
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .menu a:hover {
-            background: var(--sidebar-hover);
-            transform: translateX(-5px);
-        }
-
-        .menu a.active {
-            background: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-        }
-
-        .theme-toggle {
-            margin-top: auto;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px;
-            border-radius: 12px;
-            transition: 0.3s;
-            font-weight: 500;
-        }
-        
-        .theme-toggle:hover {
-            background: var(--sidebar-hover);
-        }
+        .sidebar { width: 260px; padding: 25px 20px; display: flex; flex-direction: column; transition: all 0.3s ease; }
+        .logo { display: flex; align-items: center; gap: 12px; color: var(--primary-color); margin-bottom: 40px; font-size: 1.2rem; }
+        .menu { display: flex; flex-direction: column; gap: 5px; }
+        .menu a { display: flex; align-items: center; gap: 15px; padding: 15px; text-decoration: none; color: var(--text-primary); border-radius: 12px; transition: all 0.3s ease; font-weight: 500; }
+        .menu a:hover { background: var(--sidebar-hover); transform: translateX(-5px); }
+        .menu a.active { background: var(--primary-color); color: white; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .theme-toggle { margin-top: auto; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 15px; border-radius: 12px; transition: 0.3s; font-weight: 500; }
+        .theme-toggle:hover { background: var(--sidebar-hover); }
 
         /* المحتوى الرئيسي */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            overflow-y: auto;
-            padding-right: 10px;
-            padding-bottom: 20px;
-        }
-
-        /* تخصيص شريط التمرير */
+        .main-content { flex: 1; display: flex; flex-direction: column; gap: 30px; overflow-y: auto; padding-right: 10px; padding-bottom: 20px; }
         .main-content::-webkit-scrollbar { width: 8px; }
         .main-content::-webkit-scrollbar-track { background: transparent; }
         .main-content::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 10px; }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-        }
-
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
         header h1 { font-size: 1.8rem; margin-bottom: 5px; }
         header p { color: var(--text-secondary); }
-
-        .user-profile {
-            padding: 5px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
+        .user-profile { padding: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s; }
         .user-profile:hover { transform: scale(1.05); }
         .user-profile img { border-radius: 50%; width: 50px; height: 50px; }
 
+        /* نموذج إدخال الوجبات */
+        .add-meal-section { padding: 25px; margin-bottom: 10px; }
+        .add-meal-section h3 { margin-bottom: 15px; font-size: 1.2rem; color: var(--text-primary); }
+        .meal-form { display: flex; gap: 15px; flex-wrap: wrap; }
+        .form-input { flex: 1; min-width: 150px; padding: 12px 15px; border: 1px solid var(--glass-border); border-radius: 10px; background: var(--bg-color); color: var(--text-primary); outline: none; font-size: 1rem; }
+        .form-input:focus { border-color: var(--primary-color); }
+        .btn-primary { padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4); }
+
         /* شبكة الإحصائيات السريعة */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            display: flex;
-            align-items: center;
-            padding: 25px;
-            gap: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-icon {
-            font-size: 24px;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            color: white;
-            flex-shrink: 0;
-        }
-
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .stat-card { display: flex; align-items: center; padding: 25px; gap: 20px; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); }
+        .stat-icon { font-size: 24px; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; border-radius: 16px; color: white; flex-shrink: 0; }
+        
         .stat-icon.calories { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
         .stat-icon.water { background: linear-gradient(135deg, #4dabf7, #1e90ff); }
         .stat-icon.steps { background: linear-gradient(135deg, #51cf66, #2ed573); }
@@ -213,65 +105,25 @@
 
         .stat-info { flex: 1; }
         .stat-info h3 { font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;}
-        .stat-info p { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .stat-info p { font-size: 20px; font-weight: 700; margin-bottom: 12px; transition: 0.3s; }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(128, 128, 128, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
+        .progress-bar { width: 100%; height: 8px; background: rgba(128, 128, 128, 0.2); border-radius: 10px; overflow: hidden; }
         .progress { height: 100%; border-radius: 10px; transition: width 1s ease-in-out; }
 
         /* قسم الرسوم البيانية */
-        .charts-section {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        .chart-container {
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chart-container h3 {
-            align-self: flex-start;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            width: 100%;
-            height: 250px;
-            display: flex;
-            justify-content: center;
-        }
+        .charts-section { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        .chart-container { padding: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .chart-container h3 { align-self: flex-start; margin-bottom: 20px; color: var(--text-primary); font-size: 1.1rem; }
+        .chart-wrapper { position: relative; width: 100%; height: 250px; display: flex; justify-content: center; }
 
         /* التجاوب مع الشاشات الصغيرة */
-        @media (max-width: 900px) {
-            .charts-section { grid-template-columns: 1fr; }
-        }
-
+        @media (max-width: 900px) { .charts-section { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
             .app-container { flex-direction: column; padding: 10px; height: auto; overflow: auto;}
             body { overflow: auto; }
-            .sidebar { 
-                width: 100%; 
-                flex-direction: row; 
-                justify-content: space-between; 
-                align-items: center; 
-                padding: 15px; 
-            }
+            .sidebar { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; padding: 15px; }
             .logo { margin-bottom: 0; }
-            .menu { display: none; /* إخفاء القائمة في الموبايل مؤقتاً */ }
+            .menu { display: none; }
             .theme-toggle { margin-top: 0; padding: 5px; }
             .theme-toggle span { display: none; }
             .main-content { overflow-y: visible; padding-right: 0; }
@@ -285,10 +137,7 @@
         
         <!-- القائمة الجانبية -->
         <aside class="sidebar glass-effect">
-            <div class="logo">
-                <i class="fa-solid fa-leaf"></i>
-                <h2>HealthTracker</h2>
-            </div>
+            <div class="logo"><i class="fa-solid fa-leaf"></i><h2>HealthTracker</h2></div>
             <nav class="menu">
                 <a href="#" class="active"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a>
                 <a href="#"><i class="fa-solid fa-utensils"></i> إدارة الطعام</a>
@@ -298,8 +147,7 @@
                 <a href="#"><i class="fa-solid fa-gear"></i> الإعدادات</a>
             </nav>
             <div class="theme-toggle" id="theme-toggle">
-                <i class="fa-solid fa-moon"></i>
-                <span>الوضع الليلي</span>
+                <i class="fa-solid fa-moon"></i><span>الوضع الليلي</span>
             </div>
         </aside>
 
@@ -315,44 +163,57 @@
                 </div>
             </header>
 
+            <!-- قسم إضافة وجبة جديدة -->
+            <section class="add-meal-section glass-effect">
+                <h3><i class="fa-solid fa-plus-circle"></i> تسجيل وجبة سريعة</h3>
+                <div class="meal-form">
+                    <select id="food-select" class="form-input"></select>
+                    <input type="number" id="food-weight" class="form-input" placeholder="الكمية (بالجرام)" min="1">
+                    <select id="meal-type" class="form-input">
+                        <option value="breakfast">فطور</option>
+                        <option value="lunch">غداء</option>
+                        <option value="dinner">عشاء</option>
+                        <option value="snack">سناك</option>
+                    </select>
+                    <button id="add-meal-btn" class="btn-primary">حفظ الوجبة</button>
+                </div>
+            </section>
+
             <!-- بطاقات الإحصائيات السريعة -->
             <section class="stats-grid">
-                <!-- بطاقة السعرات -->
+                <!-- السعرات -->
                 <div class="stat-card glass-effect">
                     <div class="stat-icon calories"><i class="fa-solid fa-fire"></i></div>
                     <div class="stat-info">
                         <h3>السعرات الحرارية</h3>
-                        <p id="calories-display">1450 / 2200 <small>kcal</small></p>
-                        <div class="progress-bar"><div class="progress" style="width: 65%; background: #ff6b6b;"></div></div>
+                        <p id="calories-display">0 / 2200 <small>kcal</small></p>
+                        <div class="progress-bar"><div class="progress" id="calories-progress" style="width: 0%; background: #ff6b6b;"></div></div>
                     </div>
                 </div>
-                
-                <!-- بطاقة الماء -->
+                <!-- الماء -->
                 <div class="stat-card glass-effect">
                     <div class="stat-icon water"><i class="fa-solid fa-droplet"></i></div>
                     <div class="stat-info">
                         <h3>الماء المشروب</h3>
-                        <p id="water-display">1.8 / 3 <small>Ltr</small></p>
+                        <p>1.8 / 3.0 <small>Ltr</small></p>
                         <div class="progress-bar"><div class="progress" style="width: 60%; background: #4dabf7;"></div></div>
                     </div>
                 </div>
-
-                <!-- بطاقة الخطوات -->
+                <!-- الخطوات -->
                 <div class="stat-card glass-effect">
                     <div class="stat-icon steps"><i class="fa-solid fa-shoe-prints"></i></div>
                     <div class="stat-info">
                         <h3>الخطوات اليومية</h3>
-                        <p id="steps-display">7,230 / 10,000</p>
+                        <p>7,230 / 10,000</p>
                         <div class="progress-bar"><div class="progress" style="width: 72%; background: #51cf66;"></div></div>
                     </div>
                 </div>
-
-                <!-- بطاقة النوم -->
+                <!-- النوم -->
                 <div class="stat-card glass-effect">
                     <div class="stat-icon sleep"><i class="fa-solid fa-bed"></i></div>
                     <div class="stat-info">
                         <h3>جودة النوم</h3>
-                        <p id="sleep-display">7h 15m / 8h</p>
+                        <p>7h 15m / 8h</p>
                         <div class="progress-bar"><div class="progress" style="width: 90%; background: #845ef7;"></div></div>
                     </div>
                 </div>
@@ -361,16 +222,12 @@
             <!-- الرسوم البيانية -->
             <section class="charts-section">
                 <div class="chart-container glass-effect">
-                    <h3>المغذيات الكبرى (الماكروز)</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="macrosChart"></canvas>
-                    </div>
+                    <h3>المغذيات الكبرى المكتسبة</h3>
+                    <div class="chart-wrapper"><canvas id="macrosChart"></canvas></div>
                 </div>
                 <div class="chart-container glass-effect">
                     <h3>تطور الوزن آخر 7 أيام</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="weightChart"></canvas>
-                    </div>
+                    <div class="chart-wrapper"><canvas id="weightChart"></canvas></div>
                 </div>
             </section>
         </main>
@@ -378,164 +235,212 @@
 
     <!-- ==================== قسم الجافاسكريبت (JS) ==================== -->
     <script>
-        // 1. قاعدة بيانات الأطعمة (JSON مدمج لتسهيل الوصول بدون سيرفر محلي)
+        // 1. قاعدة بيانات الأطعمة (مدمجة)
         const foodsDatabase = [
-            { id: "1", name: "أرز أبيض (مطبوخ)", category: "carbs", baseWeight: 100, calories: 130, protein: 2.7, carbs: 28, fat: 0.3, fiber: 0.4 },
-            { id: "2", name: "صدر دجاج (مشوي)", category: "protein", baseWeight: 100, calories: 165, protein: 31, carbs: 0, fat: 3.6, fiber: 0 },
-            { id: "3", name: "شوفان", category: "carbs", baseWeight: 100, calories: 389, protein: 16.9, carbs: 66.3, fat: 6.9, fiber: 10.6 }
+            { id: "1", name: "أرز أبيض (مطبوخ)", baseWeight: 100, calories: 130, protein: 2.7, carbs: 28, fat: 0.3 },
+            { id: "2", name: "صدر دجاج (مشوي)", baseWeight: 100, calories: 165, protein: 31, carbs: 0, fat: 3.6 },
+            { id: "3", name: "شوفان", baseWeight: 100, calories: 389, protein: 16.9, carbs: 66.3, fat: 6.9 },
+            { id: "4", name: "بيض (مسلوق)", baseWeight: 100, calories: 155, protein: 13, carbs: 1.1, fat: 11 },
+            { id: "5", name: "موز", baseWeight: 100, calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3 }
         ];
 
-        // 2. كلاس إدارة التخزين المحلي (LocalStorage)
+        // 2. كلاس إدارة التخزين
         class StorageManager {
-            static save(key, data) {
-                localStorage.setItem(key, JSON.stringify(data));
-            }
+            static save(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+            static load(key) { const data = localStorage.getItem(key); return data ? JSON.parse(data) : null; }
+        }
 
-            static load(key) {
-                const data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : null;
-            }
-
-            static initDefaultData() {
-                if (!this.load('appSettings')) {
-                    this.save('appSettings', { theme: 'light', goal: 'maintain' });
-                }
+        // 3. كلاس العمليات الحسابية للأغذية
+        class FoodCalculator {
+            constructor(database) { this.database = database; }
+            getFoodById(id) { return this.database.find(food => food.id === id); }
+            calculateNutrients(foodId, weightInGrams) {
+                const food = this.getFoodById(foodId);
+                if (!food) return null;
+                const ratio = weightInGrams / food.baseWeight;
+                return {
+                    id: food.id, name: food.name, weight: weightInGrams,
+                    calories: +(food.calories * ratio).toFixed(1),
+                    macros: {
+                        protein: +(food.protein * ratio).toFixed(1),
+                        carbs: +(food.carbs * ratio).toFixed(1),
+                        fat: +(food.fat * ratio).toFixed(1)
+                    }
+                };
             }
         }
 
-        // 3. كلاس إدارة الرسوم البيانية (Chart.js)
+        // 4. كلاس إدارة الوجبات للمستخدم
+        class MealManager {
+            constructor(calculator) {
+                this.calculator = calculator;
+                this.storageKey = 'userMealsLog';
+                this.mealsHistory = StorageManager.load(this.storageKey) || [];
+            }
+            addFoodEntry(mealType, foodId, weightInGrams) {
+                const calculatedFood = this.calculator.calculateNutrients(foodId, weightInGrams);
+                if (!calculatedFood) return false;
+                const entry = {
+                    entryId: 'entry_' + Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    mealType: mealType,
+                    foodData: calculatedFood
+                };
+                this.mealsHistory.push(entry);
+                StorageManager.save(this.storageKey, this.mealsHistory);
+                return entry;
+            }
+            getDailySummary(dateString) {
+                const dailyMeals = this.mealsHistory.filter(entry => entry.date === dateString);
+                return dailyMeals.reduce((summary, entry) => {
+                    summary.totalCalories += entry.foodData.calories;
+                    summary.totalProtein += entry.foodData.macros.protein;
+                    summary.totalCarbs += entry.foodData.macros.carbs;
+                    summary.totalFat += entry.foodData.macros.fat;
+                    return summary;
+                }, { totalCalories: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0 });
+            }
+        }
+
+        // 5. كلاس إدارة الرسوم البيانية
         class DashboardCharts {
             constructor() {
                 this.macrosChart = null;
                 this.weightChart = null;
-                
-                // متغيرات الألوان لتتناسب مع الوضع الفاتح والليلي
-                this.textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#2d3436';
-                this.gridColor = getComputedStyle(document.documentElement).getPropertyValue('--glass-border').trim() || 'rgba(0,0,0,0.1)';
+                this.textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
             }
 
-            initCharts() {
-                // تدمير الرسوم القديمة إذا كانت موجودة (مهم جداً عند تغيير الوضع الليلي/الفاتح)
+            initCharts(macrosData = [0, 0, 0]) {
                 if (this.macrosChart) this.macrosChart.destroy();
                 if (this.weightChart) this.weightChart.destroy();
-
-                // تحديث الألوان بناءً على الوضع الحالي
                 this.textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
                 
-                // --- رسمة المغذيات الكبرى (Doughnut) ---
+                // رسمة الماكروز
                 const ctxMacros = document.getElementById('macrosChart').getContext('2d');
                 this.macrosChart = new Chart(ctxMacros, {
                     type: 'doughnut',
                     data: {
                         labels: ['البروتين', 'الكربوهيدرات', 'الدهون'],
                         datasets: [{
-                            data: [120, 210, 55], // بيانات افتراضية
+                            data: macrosData.every(val => val === 0) ? [1, 1, 1] : macrosData, // لتجنب اختفاء الدائرة إذا كانت القيم صفر
                             backgroundColor: ['#ff4757', '#1e90ff', '#ffa502'],
-                            borderWidth: 0,
-                            hoverOffset: 10,
-                            cutout: '75%'
+                            borderWidth: 0, cutout: '75%'
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { color: this.textColor, font: { family: 'Tajawal', size: 14 } }
-                            }
-                        }
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { color: this.textColor, font: { family: 'Tajawal' } } } }
                     }
                 });
 
-                // --- رسمة تطور الوزن (Line) ---
+                // رسمة الوزن (تجريبية)
                 const ctxWeight = document.getElementById('weightChart').getContext('2d');
                 this.weightChart = new Chart(ctxWeight, {
                     type: 'line',
                     data: {
                         labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
                         datasets: [{
-                            label: 'الوزن (كجم)',
-                            data: [76.5, 76.2, 76.4, 75.8, 75.5, 75.6, 75.1],
-                            borderColor: '#2ECC71',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            pointBackgroundColor: '#2ECC71',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            fill: true,
+                            label: 'الوزن (كجم)', data: [76.5, 76.2, 76.4, 75.8, 75.5, 75.6, 75.1],
+                            borderColor: '#2ECC71', borderWidth: 3, tension: 0.4, fill: true,
                             backgroundColor: 'rgba(46, 204, 113, 0.15)'
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: { 
-                                ticks: { color: this.textColor, font: {family: 'Tajawal'} },
-                                grid: { color: 'rgba(128,128,128,0.1)' }
-                            },
-                            x: { 
-                                ticks: { color: this.textColor, font: {family: 'Tajawal'} },
-                                grid: { display: false }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { ticks: { color: this.textColor } }, x: { ticks: { color: this.textColor } } },
+                        plugins: { legend: { display: false } }
                     }
                 });
             }
+
+            updateMacrosChart(macrosData) {
+                if (this.macrosChart) {
+                    this.macrosChart.data.datasets[0].data = macrosData;
+                    this.macrosChart.update();
+                }
+            }
         }
 
-        // 4. تهيئة التطبيق الأساسي
+        // 6. الربط الأساسي والأحداث (Main App Logic)
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // تهيئة قاعدة البيانات والتخزين
-            StorageManager.initDefaultData();
-            let settings = StorageManager.load('appSettings');
-            
-            // كائن الرسوم البيانية
+            // تهيئة الفئات
             const appCharts = new DashboardCharts();
-
-            // نظام الوضع الفاتح والليلي
-            const htmlElement = document.documentElement;
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const themeIcon = themeToggleBtn.querySelector('i');
-            const themeText = themeToggleBtn.querySelector('span');
-
-            function applyTheme(theme) {
-                htmlElement.setAttribute('data-theme', theme);
-                if(theme === 'dark') {
-                    themeIcon.className = 'fa-solid fa-sun';
-                    themeText.textContent = 'الوضع الفاتح';
-                } else {
-                    themeIcon.className = 'fa-solid fa-moon';
-                    themeText.textContent = 'الوضع الليلي';
-                }
-                
-                // إعادة رسم الشارتات لتتحدث ألوان النصوص
-                setTimeout(() => {
-                    appCharts.initCharts();
-                }, 50);
-            }
-
-            // تطبيق الوضع المحفوظ مسبقاً
-            applyTheme(settings.theme);
-
-            // زر تغيير الوضع
-            themeToggleBtn.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                applyTheme(newTheme);
-                
-                // حفظ التغيير في LocalStorage
-                settings.theme = newTheme;
-                StorageManager.save('appSettings', settings);
+            const calculator = new FoodCalculator(foodsDatabase);
+            const mealManager = new MealManager(calculator);
+            
+            const goalCalories = 2200; // هدف المستخدم
+            
+            // تعبئة قائمة الأطعمة المنسدلة
+            const foodSelect = document.getElementById('food-select');
+            foodsDatabase.forEach(food => {
+                const option = document.createElement('option');
+                option.value = food.id; option.textContent = food.name;
+                foodSelect.appendChild(option);
             });
 
+            // دالة تحديث واجهة المستخدم
+            function updateDashboardUI() {
+                const today = new Date().toISOString().split('T')[0];
+                const summary = mealManager.getDailySummary(today);
+
+                // تحديث النصوص وشريط السعرات
+                document.getElementById('calories-display').innerHTML = `${Math.round(summary.totalCalories)} / ${goalCalories} <small>kcal</small>`;
+                let calPercentage = (summary.totalCalories / goalCalories) * 100;
+                document.getElementById('calories-progress').style.width = `${Math.min(calPercentage, 100)}%`;
+                
+                // تغيير لون شريط السعرات إذا تجاوز الهدف
+                if(calPercentage > 100) {
+                    document.getElementById('calories-progress').style.background = '#e74c3c';
+                }
+
+                // تحديث رسمة الماكروز
+                const newMacros = [Math.round(summary.totalProtein), Math.round(summary.totalCarbs), Math.round(summary.totalFat)];
+                appCharts.updateMacrosChart(newMacros);
+            }
+
+            // رسم الشارتات أول مرة بناءً على بيانات اليوم
+            const todaySummaryInit = mealManager.getDailySummary(new Date().toISOString().split('T')[0]);
+            appCharts.initCharts([todaySummaryInit.totalProtein, todaySummaryInit.totalCarbs, todaySummaryInit.totalFat]);
+            updateDashboardUI();
+
+            // حدث إضافة وجبة
+            document.getElementById('add-meal-btn').addEventListener('click', () => {
+                const foodId = document.getElementById('food-select').value;
+                const weight = parseFloat(document.getElementById('food-weight').value);
+                const mealType = document.getElementById('meal-type').value;
+
+                if (isNaN(weight) || weight <= 0) {
+                    alert("الرجاء إدخال كمية صحيحة بالجرام."); return;
+                }
+
+                if (mealManager.addFoodEntry(mealType, foodId, weight)) {
+                    document.getElementById('food-weight').value = ''; // تفريغ الحقل
+                    updateDashboardUI(); // تحديث الواجهة فوراً
+                }
+            });
+
+            // نظام الوضع الليلي/الفاتح
+            const htmlElement = document.documentElement;
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            let savedTheme = StorageManager.load('appTheme') || 'light';
+            
+            function applyTheme(theme) {
+                htmlElement.setAttribute('data-theme', theme);
+                themeToggleBtn.querySelector('i').className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+                themeToggleBtn.querySelector('span').textContent = theme === 'dark' ? 'الوضع الفاتح' : 'الوضع الليلي';
+                StorageManager.save('appTheme', theme);
+                
+                // إعادة رسم الشارتات لتحديث ألوان النصوص (نمرر البيانات الحالية لها)
+                const currentSummary = mealManager.getDailySummary(new Date().toISOString().split('T')[0]);
+                setTimeout(() => appCharts.initCharts([currentSummary.totalProtein, currentSummary.totalCarbs, currentSummary.totalFat]), 50);
+            }
+
+            applyTheme(savedTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const newTheme = htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
         });
     </script>
 </body>
